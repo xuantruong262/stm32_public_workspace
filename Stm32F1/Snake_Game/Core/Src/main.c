@@ -263,12 +263,11 @@ int main(void)
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
   ST7735_Init();
-  // // uint16_t arr[16] = {0x0000,0x1111,0x2222,0x3333,0x4444,0x5555,0x6666,0x7777,0x8888,0x9999,0xaaaa,0xbbbb,0xcccc,0xdddd,0xeeee,0xffff};
   ST7735_FillScreen(0x0000); // Fill black
   Snake My_Snake;
   Cherry cherry;
-        cherry.pos_x = Random(108,4);
-        cherry.pos_y = Random(140,4);
+  cherry.pos_x = Random(108,4); //128 - 2* OBJECTS_THICKNESS - Cherry_Size <=> 128 - 2* 4 - OBJECTS_THICKNESS*3
+  cherry.pos_y = Random(140,4); //160 - 2* OBJECTS_THICKNESS - Cherry_Size <=> 160 - 2* 4 - OBJECTS_THICKNESS*3
   cherry.color  = 0xf800;
   Init(&My_Snake);
   My_Snake.Init_border(&My_Snake);
