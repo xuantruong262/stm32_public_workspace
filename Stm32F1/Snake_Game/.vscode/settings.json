@@ -5,6 +5,7 @@
         "compare": "c",
         "main.h": "c",
         "snake_game.h": "c",
-        "limits": "c"
+        "limits": "c",
+        "stdint.h": "c"
     }
 }

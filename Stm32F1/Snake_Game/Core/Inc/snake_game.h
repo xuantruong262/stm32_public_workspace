@@ -9,13 +9,14 @@ extern "C" {
 #endif
 
 // For USER DEFINE
-#define Size_per_block 2
+#define Size_per_block 4
 #define DISPLAY_WIDTH   128
 #define DISPLAY_HEIGHT  160
-#define OBJECTS_THICKNESS 2
+#define OBJECTS_THICKNESS 4
 
 // For Privite DEFINE
 #define Is_up_active 0
+
 #define Is_right_active  1
 #define Is_down_active  2
 #define Is_left_active  3

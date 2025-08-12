@@ -86,19 +86,19 @@ void Init(Snake *my_snake) {
 	}
     Obj_tail = (obj_status){
         .position_in_table = {.x = 1, .y = 1},
-        .width = 2,
-        .height = 2,
+        .width = OBJECTS_THICKNESS,
+        .height = OBJECTS_THICKNESS,
         .color = 0xf7e0};
 
     Obj_head = (obj_status){
         .position_in_table = {.x = 7, .y = 1},
-        .width = 2,
-        .height = 2,
+        .width = OBJECTS_THICKNESS,
+        .height = OBJECTS_THICKNESS,
         .color = 0xf7e0};
     Obj_RMV = (obj_status){
         .position_in_table = {.x = 0, .y = 0},
-        .width = 2,
-        .height = 2,
+        .width = OBJECTS_THICKNESS,
+        .height = OBJECTS_THICKNESS,
         .color = 0x0000};
     total_branch = 1;
 
@@ -344,22 +344,22 @@ void Snake_Control(Snake *my_snake, ekey *Key){
 }
 
 void Cherry_Control(Cherry *cherry){
-  Cherry_In_table.pos_x = cherry->pos_x>>1;
-  Cherry_In_table.pos_y = cherry->pos_y>>1;
+  Cherry_In_table.pos_x = cherry->pos_x/OBJECTS_THICKNESS;
+  Cherry_In_table.pos_y = cherry->pos_y/OBJECTS_THICKNESS;
   Cherry_In_table.width = 3;
   Cherry_In_table.height = 3;
   cherry->color  = 0xf800;
-  setbit((cherry->pos_x>>1),1,  Box[cherry->pos_y>>1]);
-  setbit((cherry->pos_x>>1)+1,1,Box[cherry->pos_y>>1]);
-  setbit((cherry->pos_x>>1)+2,1,Box[cherry->pos_y>>1]);
+  setbit((cherry->pos_x/OBJECTS_THICKNESS),1,  Box[ cherry->pos_y/OBJECTS_THICKNESS]);
+  setbit((cherry->pos_x/OBJECTS_THICKNESS)+1,1,Box[ cherry->pos_y/OBJECTS_THICKNESS]);
+  setbit((cherry->pos_x/OBJECTS_THICKNESS)+2,1,Box[ cherry->pos_y/OBJECTS_THICKNESS]);
 
-  setbit((cherry->pos_x>>1),1,  Box[(cherry->pos_y>>1)+1]);
-  setbit((cherry->pos_x>>1)+1,1,Box[(cherry->pos_y>>1)+1]);
-  setbit((cherry->pos_x>>1)+2,1,Box[(cherry->pos_y>>1)+1]);
+  setbit((cherry->pos_x/OBJECTS_THICKNESS),1,  Box[(cherry->pos_y/OBJECTS_THICKNESS)+1]);
+  setbit((cherry->pos_x/OBJECTS_THICKNESS)+1,1,Box[(cherry->pos_y/OBJECTS_THICKNESS)+1]);
+  setbit((cherry->pos_x/OBJECTS_THICKNESS)+2,1,Box[(cherry->pos_y/OBJECTS_THICKNESS)+1]);
 
-  setbit((cherry->pos_x>>1),1,  Box[(cherry->pos_y>>1)+2]);
-  setbit((cherry->pos_x>>1)+1,1,Box[(cherry->pos_y>>1)+2]);
-  setbit((cherry->pos_x>>1)+2,1,Box[(cherry->pos_y>>1)+2]);
+  setbit((cherry->pos_x/OBJECTS_THICKNESS),1,  Box[(cherry->pos_y/OBJECTS_THICKNESS)+2]);
+  setbit((cherry->pos_x/OBJECTS_THICKNESS)+1,1,Box[(cherry->pos_y/OBJECTS_THICKNESS)+2]);
+  setbit((cherry->pos_x/OBJECTS_THICKNESS)+2,1,Box[(cherry->pos_y/OBJECTS_THICKNESS)+2]);
   cherry->width  = 3*Size_per_block;
   cherry->height = 3*Size_per_block;
 }

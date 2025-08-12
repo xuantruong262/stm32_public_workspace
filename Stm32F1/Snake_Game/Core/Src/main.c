@@ -45,7 +45,6 @@
 #define Is_right_active  1
 #define Is_down_active  2
 #define Is_left_active  3
-#define Size_per_block 2
 #define LEN(x) x*Size_per_block
 /* USER CODE END PD */
 
@@ -268,8 +267,8 @@ int main(void)
   ST7735_FillScreen(0x0000); // Fill black
   Snake My_Snake;
   Cherry cherry;
-  cherry.pos_x = Random(122,2);
-  cherry.pos_y = Random(154,2);
+        cherry.pos_x = Random(108,4);
+        cherry.pos_y = Random(140,4);
   cherry.color  = 0xf800;
   Init(&My_Snake);
   My_Snake.Init_border(&My_Snake);
@@ -294,8 +293,8 @@ int main(void)
         ST7735_Drawing(My_Snake.boder.color, My_Snake.boder.pos_x,My_Snake.boder.pos_y,My_Snake.boder.width,My_Snake.boder.height);
         ST7735_Drawing(My_Snake.valid_space.color, My_Snake.valid_space.pos_x,My_Snake.valid_space.pos_y,My_Snake.valid_space.width,My_Snake.valid_space.height);
         ST7735_Drawing(My_Snake.snake.color, My_Snake.snake.pos_x,My_Snake.snake.pos_y,My_Snake.snake.width,My_Snake.snake.height);
-        cherry.pos_x = Random(122,2);
-        cherry.pos_y = Random(154,2);
+        cherry.pos_x = Random(108,4);
+        cherry.pos_y = Random(140,4);
         Cherry_Control(&cherry);
         ST7735_Drawing(cherry.color, cherry.pos_x,cherry.pos_y,cherry.width,cherry.height);
       }
@@ -305,8 +304,8 @@ int main(void)
         ST7735_Drawing(My_Snake.snake_head.color, My_Snake.snake_head.pos_x,My_Snake.snake_head.pos_y,My_Snake.snake_head.width,My_Snake.snake_head.height);
         ST7735_Drawing(My_Snake.snake_tail.color, My_Snake.snake_tail.pos_x,My_Snake.snake_tail.pos_y,My_Snake.snake_tail.width,My_Snake.snake_tail.height);
         ST7735_Drawing(My_Snake.snake_rmv.color, My_Snake.snake_rmv.pos_x,My_Snake.snake_rmv.pos_y,My_Snake.snake_rmv.width,My_Snake.snake_rmv.height);      
-        cherry.pos_x = Random(122,2);
-        cherry.pos_y = Random(154,2);
+        cherry.pos_x = Random(108,4);
+        cherry.pos_y = Random(140,4);
         Cherry_Control(&cherry);
         ST7735_Drawing(cherry.color, cherry.pos_x,cherry.pos_y,cherry.width,cherry.height);
 
