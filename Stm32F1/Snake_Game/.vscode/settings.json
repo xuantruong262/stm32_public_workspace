@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "stdlib.h": "c",
+        "string.h": "c",
+        "compare": "c",
+        "main.h": "c",
+        "snake_game.h": "c",
+        "limits": "c"
+    }
+}
