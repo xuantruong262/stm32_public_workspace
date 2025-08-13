@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "fatfs.h": "c",
+        "cstdint": "cpp",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "atomic": "c"
+    },
+    "cortex-debug.variableUseNaturalFormat": false
+}
