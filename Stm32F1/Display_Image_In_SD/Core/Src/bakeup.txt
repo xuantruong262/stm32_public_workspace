@@ -1,0 +1,57 @@
+    i = 0;
+    object.pos_y = 0;
+    while (1)
+    {
+      if (sd_read_file("rsz_image1_scaledown_RGB565.bmp", Frame_header_Buffer, 54, &br, 0x0) == FR_OK)
+      {
+        HAL_IWDG_Refresh(&hiwdg);
+        break;
+      }
+    }
+
+    extract_BMP_Info(Frame_header_Buffer, &header_info);
+    int i = 0;
+    while (1)
+    {
+      if (sd_read_file("rsz_image1_scaledown_RGB565.bmp", Frame_buffer, 4096, &br, 0x42 + i * 4096) == FR_OK)
+      {
+        ST7735_Drawing(object);
+        object.pos_y += 16 ;
+        HAL_IWDG_Refresh(&hiwdg);
+        i++;
+        // memset(Frame_buffer, 0, 256);
+        if (i == 10)
+        {
+          break;
+        }
+      }
+    }
+    HAL_Delay(20);
+    i = 0;
+    object.pos_y = 0;
+    while (1)
+    {
+      if (sd_read_file("rsz_image_scaledown_RGB565.bmp", Frame_header_Buffer, 54, &br, 0x0) == FR_OK)
+      {
+        HAL_IWDG_Refresh(&hiwdg);
+        break;
+      }
+    }
+    extract_BMP_Info(Frame_header_Buffer, &header_info);
+
+    while (1)
+    {
+      if (sd_read_file("rsz_image_scaledown_RGB565.bmp", Frame_buffer, 4096, &br, 0x42 + i * 4096) == FR_OK)
+      {
+        ST7735_Drawing(object);
+        object.pos_y += 16;
+        HAL_IWDG_Refresh(&hiwdg);
+        i++;
+        // memset(Frame_buffer, 0, 256);
+        if (i == 10)
+        {
+          break;
+        }
+      }
+    }
+    HAL_Delay(20);

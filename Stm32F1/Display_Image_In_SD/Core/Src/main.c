@@ -34,8 +34,6 @@ typedef struct obj_status
   uint8_t pos_y;
   uint8_t width;
   uint8_t height;
-  uint16_t *frame_buf;
-  
 } obj_status;
 typedef struct bmp_info
 {
@@ -48,6 +46,14 @@ typedef struct bmp_info
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define IWDGG 1
+#define display_w 160
+#define display_h 128
+#define w_numchunk_in_frame 8
+#define byte_per_pix 2
+
+#define line_per_chunk display_h/w_numchunk_in_frame
+#define total_pix_per_chunk  line_per_chunk * display_w
 
 /* USER CODE END PD */
 
@@ -59,51 +65,53 @@ typedef struct bmp_info
 /* Private variables ---------------------------------------------------------*/
 IWDG_HandleTypeDef hiwdg;
 
+SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
+DMA_HandleTypeDef hdma_spi1_rx;
+DMA_HandleTypeDef hdma_spi1_tx;
 DMA_HandleTypeDef hdma_spi2_rx;
 DMA_HandleTypeDef hdma_spi2_tx;
 
 /* USER CODE BEGIN PV */
-volatile int dma_tx_done = 0;
-volatile int dma_rx_done = 0;
+volatile int dma_tx_done_spi2 = 1;
+volatile int dma_rx_done_spi2 = 0;
+
 UINT br;
-uint16_t  Frame_buffer[128];
-uint8_t   Frame_header_Buffer[54];
 bmp_info header_info;
-obj_status object = {0,159,128,1,Frame_buffer};
-// object.frame_buf = Frame_header_Buffer;
-// object.pos_x = 0;
-// object.pos_y = 159;
-// object.width  = 127;
-// object.height = 1;
+
+uint32_t cnt = 0;
+uint8_t FPS = 0;
+uint32_t my_time_TFT = 0;
+uint32_t my_time_SD = 0;
+uint16_t Frame_bufferA[total_pix_per_chunk];
+uint16_t Frame_bufferB[total_pix_per_chunk];
+
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
-static void MX_SPI2_Init(void);
 static void MX_IWDG_Init(void);
+static void MX_SPI1_Init(void);
+static void MX_SPI2_Init(void);
 /* USER CODE BEGIN PFP */
 void ST7735_SendCommand(uint8_t cmd)
 {
-  dma_tx_done = 0;
   HAL_GPIO_WritePin(TFT_TransMode_GPIO_Port, TFT_TransMode_Pin, GPIO_PIN_RESET); // Command mode
   HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_RESET);
-  HAL_SPI_Transmit_DMA(&hspi2, &cmd, 1);
-  while (!dma_tx_done)
-    ;
+  HAL_SPI_Transmit(&hspi2, &cmd, 1,HAL_MAX_DELAY);
+
   HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
 }
 
 void ST7735_SendData(uint8_t *data, uint16_t size)
 {
-  dma_tx_done = 0;
   HAL_GPIO_WritePin(TFT_TransMode_GPIO_Port, TFT_TransMode_Pin, GPIO_PIN_SET); // Data mode
   HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_RESET);
-  HAL_SPI_Transmit_DMA(&hspi2, data, size);
-  while (!dma_tx_done)
-    ;
+  HAL_SPI_Transmit(&hspi2, data, size,HAL_MAX_DELAY);
   HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
 }
 
@@ -115,7 +123,7 @@ void ST7735_Reset(void)
   HAL_Delay(10);
 }
 
-void ST7735_Init(void)
+void ST7735_Init(uint8_t Is160x128)
 {
   ST7735_Reset();
 
@@ -128,77 +136,161 @@ void ST7735_Init(void)
   ST7735_SendCommand(0x3A); // Interface Pixel Format
   uint8_t data = 0x05;      // 16-bit color
   ST7735_SendData(&data, 1);
-
+  if (Is160x128 == 1)
+  {
+    ST7735_SendCommand(0x36);
+    uint8_t ctl = 0x60;
+    ST7735_SendData(&ctl, 1);
+  }
   ST7735_SendCommand(0x29); // Display ON
   HAL_Delay(10);
 }
 
 // Fill entire screen by 1 color
-void ST7735_FillScreen(uint16_t color)
+void ST7735_FillScreen(uint16_t color,uint8_t end_x,uint8_t end_y )
 {
-  // Disable SD_Card_CS
-  HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_SET);
-
   uint8_t data[2] = {color >> 8,color & 0xFF };
   ST7735_SendCommand(0x2A);                // Column addr set
-  uint8_t col[] = {0x00, 0x00, 0x00, 127}; // x0 to x127
+  uint8_t col[] = {0x00, 0x00, 0x00, end_x}; // x0 to x127
   ST7735_SendData(col, 4);
 
   ST7735_SendCommand(0x2B);                // Row addr set
-  uint8_t row[] = {0x00, 0x00, 0x00, 159}; // y0 to y159
+  uint8_t row[] = {0x00, 0x00 , 0x00, end_y}; // y0 to y159
   ST7735_SendData(row, 4);
 
   ST7735_SendCommand(0x2C); // Memory write
 
   HAL_GPIO_WritePin(TFT_TransMode_GPIO_Port, TFT_TransMode_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_RESET);
-  dma_tx_done = 0;
   for (int i = 0; i < 128 * 160; i++)
   {
-    HAL_SPI_Transmit_DMA(&hspi2, data, 2);
-    while (!dma_tx_done)
-      ;
+    HAL_SPI_Transmit(&hspi2, data, 2,HAL_MAX_DELAY);
   }
   HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
 }
 
 void ST7735_Drawing(obj_status obj)
 {
-  // Disable SD_Card_CS
-  HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_SET);
-
   uint8_t data[2];
+  uint16_t tmp_buf[128];
   ST7735_SendCommand(0x2A);                // Column addr set
-  uint8_t col[] = {0x00, obj.pos_x, 0x00, obj.pos_x+obj.width-1}; // x0 to x127
+  uint8_t col[] = {0x00, 0x0, 0x00, obj.pos_x+obj.width-1}; // x0 to x127
   ST7735_SendData(col, 4);
 
   ST7735_SendCommand(0x2B);                // Row addr set
-  uint8_t row[] = {0x00, obj.pos_y, 0x00, obj.pos_y+obj.height-1}; // y0 to y159
+  uint8_t row[] = {0x00, obj.pos_y , 0x00, obj.pos_y+obj.height-1 }; // y0 to y159
   ST7735_SendData(row, 4);
 
   ST7735_SendCommand(0x2C); // Memory write
 
   HAL_GPIO_WritePin(TFT_TransMode_GPIO_Port, TFT_TransMode_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_RESET);
-  dma_tx_done = 0;
-  uint16_t total_pix =  (obj.width) * (obj.height);
-  for (int i = 0; i < 128 ; i++)
-  {
-    HAL_IWDG_Refresh(&hiwdg);
-    data[0] = Frame_buffer[i] >> 8 ;
-    data[1] = Frame_buffer[i] & 0xFF;
-    HAL_SPI_Transmit_DMA(&hspi2, data, 2);
-    while (!dma_tx_done)
-      ;
-  }
+  //dma_tx_done_spi2 = 0;
+  // for (int i = 0; i < 2048; i+=4) {
+  //     Frame_buffer[i]   = (Frame_buffer[i] >> 8) | (Frame_buffer[i] << 8);
+  //     Frame_buffer[i+1] = (Frame_buffer[i+1] >> 8) | (Frame_buffer[i+1] << 8);
+  //     Frame_buffer[i+2] = (Frame_buffer[i+2] >> 8) | (Frame_buffer[i+2] << 8);
+  //     Frame_buffer[i+3] = (Frame_buffer[i+3] >> 8) | (Frame_buffer[i+3] << 8);
+  // }
+    // HAL_SPI_Transmit_DMA(&hspi2, Frame_buffer, 2048 * 2);
+    // while (!dma_tx_done_spi2)
+    //   ;
   HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
 }
+
+void ST7735_video_display(obj_status obj, uint16_t *buf)
+{
+  // Disable SD_Card_CS
+  // HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_SET);
+  ST7735_SendCommand(0x2A);                // Column addr set
+  uint8_t col[] = {0x00, obj.pos_x, 0x00, obj.pos_x + obj.width-1}; // x0 to x127
+  ST7735_SendData(col, 4);
+
+  ST7735_SendCommand(0x2B);
+  uint8_t row[] = {0x00, obj.pos_y , 0x00, obj.pos_y+obj.height-1 }; // y0 to y159
+  ST7735_SendData(row, 4);
+
+  ST7735_SendCommand(0x36); 
+  uint8_t ctl = 0x60;
+  ST7735_SendData(&ctl, 1);
+
+  ST7735_SendCommand(0x2C); // Memory write
+  HAL_GPIO_WritePin(TFT_TransMode_GPIO_Port, TFT_TransMode_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_RESET);
+
+  dma_tx_done_spi2 = 0;
+  HAL_SPI_Transmit_DMA(&hspi2, buf, total_pix_per_chunk * byte_per_pix);
+  // while (!dma_tx_done_spi2)
+  //   ;
+  // HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
+}
+
+  void processing(FIL * f, uint16_t *FrameA, uint16_t *FrameB, uint16_t byte_r, uint32_t *frame_num)
+  {
+    uint32_t base_offset = *frame_num * w_numchunk_in_frame * byte_r;
+    uint32_t offset = base_offset;
+    obj_status object2 = {0,0,display_w, line_per_chunk};
+    int i = 0;
+    while (1)
+    {
+      while (1)
+      {
+        f_lseek(f, offset);
+        if (f_read(f, FrameA, byte_r - 1, &br) == FR_OK)
+        {
+#if IWDGG
+          HAL_IWDG_Refresh(&hiwdg);
+#endif
+          break;
+        }
+      }
+      while (!dma_tx_done_spi2)
+        ;
+      ST7735_video_display(object2, FrameA);
+
+      object2.pos_y += line_per_chunk;
+      i++;
+      offset = base_offset + i * byte_r;
+      f_lseek(f, offset);
+      while (1)
+      {
+        if (f_read(f, FrameB, byte_r - 1, &br) == FR_OK)
+        {
+#if IWDGG
+          HAL_IWDG_Refresh(&hiwdg);
+#endif
+          break;
+        }
+      }
+      while (!dma_tx_done_spi2)
+        ;
+      ST7735_video_display(object2, FrameB);
+      object2.pos_y += line_per_chunk;
+      i++;
+      offset = base_offset + i * byte_r;
+      if (!(i % w_numchunk_in_frame))
+      {
+        break;
+      }
+    }
+    *frame_num += 1;
+  }
 
 void extract_BMP_Info(uint8_t *Frame_header_Buffer, bmp_info *bmp){
    memcpy(&bmp->bmp_size,Frame_header_Buffer + 2, 4);
    memcpy(&bmp->width,Frame_header_Buffer + 0x12, 4);
    memcpy(&bmp->height,Frame_header_Buffer + 0x16, 4);
    memcpy(&bmp->bpp,Frame_header_Buffer + 0x1c, 2);
+}
+
+uint8_t Check_FPS(uint32_t time){
+  if( ( cnt + time) > HAL_GetTick()){
+     return 0;
+  }
+  else{
+    cnt = HAL_GetTick();
+    return 1;
+  }
 }
 
 /* USER CODE END PFP */
@@ -216,6 +308,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+  FIL f;
 
   /* USER CODE END 1 */
 
@@ -238,80 +331,47 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_SPI2_Init();
   MX_IWDG_Init();
+  MX_SPI1_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-  ST7735_Init();
-  ST7735_FillScreen(0xf800);
-  // ST7735_Drawing(object);
+ 
+  ST7735_Init(1);
+  ST7735_FillScreen(0xf800,159,127);
   HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
-  while(1){
-    if(sd_mount() == FR_OK)
-    {
-      HAL_IWDG_Refresh(&hiwdg);
-      break;
-    }
-  }
-  while(1){
-    if(sd_read_file("rsz_image1_scaledown_RGB565.bmp",Frame_header_Buffer,54,&br,0x0) == FR_OK)
-    {
-      HAL_IWDG_Refresh(&hiwdg);
-      break;
-    }
-  }
-  
-  extract_BMP_Info(Frame_header_Buffer,&header_info);
   int i = 0;
-  while(1){
-    if(sd_read_file("rsz_image1_scaledown_RGB565.bmp",Frame_buffer,128*2,&br,0x42+i*0x80*2) == FR_OK)
+  int frame_num = 0;
+  while (1)
+  {
+    if (sd_mount() == FR_OK)
     {
-      ST7735_Drawing(object);
-      object.pos_y -= 1;
+#if IWDGG
       HAL_IWDG_Refresh(&hiwdg);
-      i++;
-      memset(Frame_buffer,0,256);
-      if(i == 160){
-        break;
-      }
-    }
-  }
-  HAL_Delay(10000);
-  while(1){
-    if(sd_read_file("rsz_image_scaledown_RGB565.bmp",Frame_header_Buffer,54,&br,0x0) == FR_OK)
-    {
-      HAL_IWDG_Refresh(&hiwdg);
+#endif
       break;
-    }
-  }
-  extract_BMP_Info(Frame_header_Buffer,&header_info);
-  i = 0;
-  object.pos_y = 159 ;
-  while(1){
-    if(sd_read_file("rsz_image_scaledown_RGB565.bmp",Frame_buffer,128*2,&br,0x42+i*0x80*2) == FR_OK)
-    {
-      ST7735_Drawing(object);
-      object.pos_y -= 1;
-      HAL_IWDG_Refresh(&hiwdg);
-      i++;
-      memset(Frame_buffer,0,256);
-      if(i == 160){
-        break;
-      }
     }
   }
 
-  sd_unmount();
-  
-  // ST7735_Init();
-  // ST7735_FillScreen(0x0000);
-  // ST7735_Drawing(object);
+  while (1)
+  { 
+    if (f_open(&f,"family_guy_ep1_rgb565_full_be_160x128.rgb",FA_READ) == FR_OK)
+    {
+#if IWDGG
+      HAL_IWDG_Refresh(&hiwdg);
+#endif
+      break;
+    }
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    HAL_IWDG_Refresh(&hiwdg);
+    cnt = HAL_GetTick();
+    processing(&f,Frame_bufferA,Frame_bufferB,total_pix_per_chunk*byte_per_pix,&frame_num);
+    my_time_TFT = HAL_GetTick() - cnt;
+    FPS = 1000 / my_time_TFT;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -388,6 +448,44 @@ static void MX_IWDG_Init(void)
 }
 
 /**
+  * @brief SPI1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI1_Init(void)
+{
+
+  /* USER CODE BEGIN SPI1_Init 0 */
+
+  /* USER CODE END SPI1_Init 0 */
+
+  /* USER CODE BEGIN SPI1_Init 1 */
+
+  /* USER CODE END SPI1_Init 1 */
+  /* SPI1 parameter configuration*/
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI1_Init 2 */
+
+  /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
   * @brief SPI2 Initialization Function
   * @param None
   * @retval None
@@ -410,7 +508,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -435,6 +533,12 @@ static void MX_DMA_Init(void)
   __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
+  /* DMA1_Channel2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
+  /* DMA1_Channel3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
   /* DMA1_Channel4_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
@@ -466,7 +570,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, TFT_CS_Pin|TFT_RS_Pin|TFT_TransMode_Pin, GPIO_PIN_RESET);

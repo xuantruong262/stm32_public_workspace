@@ -5,7 +5,10 @@
         "array": "c",
         "string": "c",
         "string_view": "c",
-        "atomic": "c"
+        "atomic": "c",
+        "compare": "c",
+        "sd_spi.h": "c",
+        "initializer_list": "c"
     },
-    "cortex-debug.variableUseNaturalFormat": false
+    "cortex-debug.variableUseNaturalFormat": true
 }
