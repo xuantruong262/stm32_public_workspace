@@ -92,6 +92,7 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 	//Xuan Truong say hi!!!
+	//Xuan Truong say hi twice!!!
   /* USER CODE END 2 */
 
   /* Infinite loop */
