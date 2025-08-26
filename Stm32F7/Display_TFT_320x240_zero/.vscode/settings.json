@@ -1,0 +1,12 @@
+{
+    "npm.enableRunFromFolder": true,
+    "cortex-debug.gdbPath": "D:/STM32CubeCLT_1.18.0/GNU-tools-for-STM32/bin/arm-none-eabi-gdb",
+    "cortex-debug.openocdPath": "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/lib/OpenOCD-20250710-0.12.0/bin/openocd",
+    "files.associations": {
+        "st7735_display.h": "c",
+        "main.h": "c",
+        "sd_spi.h": "c",
+        "stdint.h": "c",
+        "fatfs.h": "c"
+    }
+}

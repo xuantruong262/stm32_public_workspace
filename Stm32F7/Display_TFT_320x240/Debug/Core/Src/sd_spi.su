@@ -1,0 +1,14 @@
+../Core/Src/sd_spi.c:46:7:HAL_SPI_TxCpltCallback	16	static
+../Core/Src/sd_spi.c:57:7:HAL_SPI_TxRxCpltCallback	16	static
+../Core/Src/sd_spi.c:70:13:SD_TransmitByte	16	static
+../Core/Src/sd_spi.c:74:16:SD_ReceiveByte	24	static
+../Core/Src/sd_spi.c:80:13:SD_TransmitBuffer	16	static
+../Core/Src/sd_spi.c:90:13:SD_ReceiveBuffer	24	static
+../Core/Src/sd_spi.c:104:18:SD_WaitReady	16	static
+../Core/Src/sd_spi.c:114:16:SD_SendCommand	24	static
+../Core/Src/sd_spi.c:133:9:sd_is_sdhc	4	static
+../Core/Src/sd_spi.c:138:11:SD_SPI_Init	32	static
+../Core/Src/sd_spi.c:192:11:SD_ReadBlocks	32	static
+../Core/Src/sd_spi.c:225:11:SD_ReadMultiBlocks	32	static
+../Core/Src/sd_spi.c:263:11:SD_WriteBlocks	32	static
+../Core/Src/sd_spi.c:295:11:SD_WriteMultiBlocks	32	static

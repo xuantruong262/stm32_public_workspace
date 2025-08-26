@@ -5,6 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/Debug/Blink_Led.elf",
+            "name": "Debug with OpenOCD",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "configFiles": [
+                "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/lib/OpenOCD-20250710-0.12.0/share/openocd/scripts/interface/stlink.cfg",
+                "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/lib/OpenOCD-20250710-0.12.0/share/openocd/scripts/target/stm32h7x.cfg",
+            ], 
+            "searchDir": [],
+            "runToEntryPoint": "main",
+            "showDevDebugOutput": "none",
+            "svdFile": "${config:STM32VSCodeExtension.cubeCLT.path}/STMicroelectronics_CMSIS_SVD/STM32H723.svd"
+        },
+        {
             "name": "Build & Debug Microcontroller - ST-Link",
             "cwd": "${workspaceFolder}",
             "type": "cortex-debug",
