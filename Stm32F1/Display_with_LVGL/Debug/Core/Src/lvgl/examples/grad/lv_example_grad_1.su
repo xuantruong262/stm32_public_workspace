@@ -1,0 +1,5 @@
+../Core/Src/lvgl/examples/grad/../../src/core/../misc/lv_style.h:531:20:lv_style_set_pad_all	16	static
+../Core/Src/lvgl/examples/grad/lv_example_grad_1.c:4:13:position_bullet	40	static
+../Core/Src/lvgl/examples/grad/lv_example_grad_1.c:20:13:frac_1_event_cb	56	static
+../Core/Src/lvgl/examples/grad/lv_example_grad_1.c:41:13:frac_2_event_cb	56	static
+../Core/Src/lvgl/examples/grad/lv_example_grad_1.c:66:6:lv_example_grad_1	48	static

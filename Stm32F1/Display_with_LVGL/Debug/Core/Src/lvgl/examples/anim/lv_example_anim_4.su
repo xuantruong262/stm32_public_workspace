@@ -1,0 +1,4 @@
+../Core/Src/lvgl/examples/anim/lv_example_anim_4.c:4:13:anim_x_cb	16	static
+../Core/Src/lvgl/examples/anim/lv_example_anim_4.c:9:13:timer_cb	24	static
+../Core/Src/lvgl/examples/anim/lv_example_anim_4.c:16:13:sw_event_cb	128	static
+../Core/Src/lvgl/examples/anim/lv_example_anim_4.c:48:6:lv_example_anim_4	16	static

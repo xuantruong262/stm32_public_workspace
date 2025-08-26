@@ -1,0 +1,8 @@
+../Core/Src/lvgl/src/tick/lv_tick.c:38:28:lv_tick_inc	1
+../Core/Src/lvgl/src/tick/lv_tick.c:46:10:lv_tick_get	3
+../Core/Src/lvgl/src/tick/lv_tick.c:67:10:lv_tick_elaps	1
+../Core/Src/lvgl/src/tick/lv_tick.c:72:10:lv_tick_diff	1
+../Core/Src/lvgl/src/tick/lv_tick.c:78:6:lv_delay_ms	4
+../Core/Src/lvgl/src/tick/lv_tick.c:96:6:lv_tick_set_cb	1
+../Core/Src/lvgl/src/tick/lv_tick.c:101:18:lv_tick_get_cb	1
+../Core/Src/lvgl/src/tick/lv_tick.c:106:6:lv_delay_set_cb	1

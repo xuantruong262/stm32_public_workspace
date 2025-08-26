@@ -1,0 +1,15 @@
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:96:13:lv_binfont_create	3
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:133:6:lv_binfont_destroy	8
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:177:23:init_bit_iterator	1
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:186:21:read_bits	4
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:208:12:read_bits_signed	2
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:217:12:read_label	4
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:234:13:load_cmaps_tables	11
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:301:16:load_cmaps	4
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:330:16:load_glyph	26
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:476:13:lvgl_load_font	14
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:581:9:load_kern	16
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:677:20:binfont_font_create_cb	3
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:696:13:binfont_font_delete_cb	1
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:701:15:binfont_font_dup_src_cb	2
+../Core/Src/lvgl/src/font/lv_binfont_loader.c:716:13:binfont_font_free_src_cb	2

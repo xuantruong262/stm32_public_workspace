@@ -1,0 +1,15 @@
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:95:6:lv_bin_decoder_init	2
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:114:13:lv_bin_decoder_info	10
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:185:13:lv_bin_decoder_open	39
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:388:6:lv_bin_decoder_close	3
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:401:13:lv_bin_decoder_get_area	36
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:544:25:get_decoder_data	3
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:561:13:free_decoder_data	5
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:578:20:decode_indexed	15
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:700:20:load_indexed	1
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:836:23:bit_extend	3
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:850:20:decode_alpha_only	11
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:927:20:decode_compressed	1
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:1046:20:decode_indexed_line	10
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:1094:20:fs_read_file_at	4
+../Core/Src/lvgl/src/libs/bin_decoder/lv_bin_decoder.c:1112:20:decompress_image	1

@@ -1,0 +1,20 @@
+{
+    "files.associations": {
+        "fatfs.h": "c",
+        "cstdint": "cpp",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "atomic": "c",
+        "compare": "c",
+        "sd_spi.h": "c",
+        "initializer_list": "c",
+        "string.h": "c",
+        "st7735_display.h": "c",
+        "main.h": "c",
+        "sd_functions.h": "c",
+        "random": "c",
+        "lvgl.h": "c"
+    },
+    "cortex-debug.variableUseNaturalFormat": true
+}

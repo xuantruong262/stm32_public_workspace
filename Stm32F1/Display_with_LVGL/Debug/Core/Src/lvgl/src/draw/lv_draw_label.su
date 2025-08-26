@@ -1,0 +1,13 @@
+../Core/Src/lvgl/src/draw/../misc/../font/../draw/../misc/../stdlib/lv_string.h:73:20:lv_memzero	16	static
+../Core/Src/lvgl/src/draw/../misc/lv_bidi.h:71:20:lv_bidi_calculate_align	24	static
+../Core/Src/lvgl/src/draw/../misc/lv_text_private.h:183:20:lv_text_is_marker	16	static
+../Core/Src/lvgl/src/draw/lv_draw_label.c:63:6:lv_draw_letter_dsc_init	24	static
+../Core/Src/lvgl/src/draw/lv_draw_label.c:75:6:lv_draw_label_dsc_init	24	static
+../Core/Src/lvgl/src/draw/lv_draw_label.c:90:23:lv_draw_task_get_label_dsc	16	static
+../Core/Src/lvgl/src/draw/lv_draw_label.c:95:6:lv_draw_glyph_dsc_init	16	static
+../Core/Src/lvgl/src/draw/lv_draw_label.c:100:28:lv_draw_label	32	static
+../Core/Src/lvgl/src/draw/lv_draw_label.c:126:28:lv_draw_character	96	static
+../Core/Src/lvgl/src/draw/lv_draw_label.c:167:28:lv_draw_letter	88	static
+../Core/Src/lvgl/src/draw/lv_draw_label.c:201:6:lv_draw_label_iterate_characters	424	static
+../Core/Src/lvgl/src/draw/lv_draw_label.c:573:16:hex_char_to_num	16	static
+../Core/Src/lvgl/src/draw/lv_draw_label.c:580:6:lv_draw_unit_draw_letter	104	static

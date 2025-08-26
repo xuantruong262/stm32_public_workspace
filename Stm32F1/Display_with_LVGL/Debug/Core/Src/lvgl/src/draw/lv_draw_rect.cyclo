@@ -1,0 +1,12 @@
+../Core/Src/lvgl/src/draw/../misc/../font/../draw/../misc/../stdlib/lv_string.h:73:20:lv_memzero	1
+../Core/Src/lvgl/src/draw/lv_draw_rect.c:41:28:lv_draw_rect_dsc_init	1
+../Core/Src/lvgl/src/draw/lv_draw_rect.c:60:6:lv_draw_fill_dsc_init	1
+../Core/Src/lvgl/src/draw/lv_draw_rect.c:67:22:lv_draw_task_get_fill_dsc	2
+../Core/Src/lvgl/src/draw/lv_draw_rect.c:72:6:lv_draw_fill	2
+../Core/Src/lvgl/src/draw/lv_draw_rect.c:85:6:lv_draw_border_dsc_init	1
+../Core/Src/lvgl/src/draw/lv_draw_rect.c:93:24:lv_draw_task_get_border_dsc	2
+../Core/Src/lvgl/src/draw/lv_draw_rect.c:98:6:lv_draw_border	2
+../Core/Src/lvgl/src/draw/lv_draw_rect.c:111:6:lv_draw_box_shadow_dsc_init	1
+../Core/Src/lvgl/src/draw/lv_draw_rect.c:118:28:lv_draw_task_get_box_shadow_dsc	2
+../Core/Src/lvgl/src/draw/lv_draw_rect.c:123:6:lv_draw_box_shadow	2
+../Core/Src/lvgl/src/draw/lv_draw_rect.c:136:6:lv_draw_rect	36

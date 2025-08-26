@@ -1,0 +1,10 @@
+../Core/Src/lvgl/src/misc/cache/instance/lv_image_cache.c:55:13:lv_image_cache_init	2
+../Core/Src/lvgl/src/misc/cache/instance/lv_image_cache.c:72:6:lv_image_cache_resize	2
+../Core/Src/lvgl/src/misc/cache/instance/lv_image_cache.c:80:6:lv_image_cache_drop	2
+../Core/Src/lvgl/src/misc/cache/instance/lv_image_cache.c:98:6:lv_image_cache_is_enabled	1
+../Core/Src/lvgl/src/misc/cache/instance/lv_image_cache.c:103:13:lv_image_cache_iter_create	1
+../Core/Src/lvgl/src/misc/cache/instance/lv_image_cache.c:108:6:lv_image_cache_dump	2
+../Core/Src/lvgl/src/misc/cache/instance/lv_image_cache.c:122:38:image_cache_common_compare	9
+../Core/Src/lvgl/src/misc/cache/instance/lv_image_cache.c:142:31:image_cache_compare_cb	1
+../Core/Src/lvgl/src/misc/cache/instance/lv_image_cache.c:149:13:image_cache_free_cb	3
+../Core/Src/lvgl/src/misc/cache/instance/lv_image_cache.c:163:13:iter_inspect_cb	2

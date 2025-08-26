@@ -1,0 +1,11 @@
+../Core/Src/lvgl/src/draw/../misc/../font/../draw/../misc/lv_area.h:107:20:lv_area_copy	16	static
+../Core/Src/lvgl/src/draw/../misc/../font/../draw/../misc/../stdlib/lv_string.h:73:20:lv_memzero	16	static
+../Core/Src/lvgl/src/draw/lv_draw_image.c:50:6:lv_draw_image_dsc_init	24	static
+../Core/Src/lvgl/src/draw/lv_draw_image.c:62:23:lv_draw_task_get_image_dsc	16	static
+../Core/Src/lvgl/src/draw/lv_draw_image.c:67:6:lv_draw_layer	72	static
+../Core/Src/lvgl/src/draw/lv_draw_image.c:98:6:lv_draw_image	320	static
+../Core/Src/lvgl/src/draw/lv_draw_image.c:190:16:lv_image_src_get_type	24	static
+../Core/Src/lvgl/src/draw/lv_draw_image.c:207:6:lv_draw_image_normal_helper	168	static
+../Core/Src/lvgl/src/draw/lv_draw_image.c:247:6:lv_draw_image_tiled_helper	192	static
+../Core/Src/lvgl/src/draw/lv_draw_image.c:306:6:lv_image_buf_get_transformed_area	64	static
+../Core/Src/lvgl/src/draw/lv_draw_image.c:337:13:img_decode_and_draw	120	static

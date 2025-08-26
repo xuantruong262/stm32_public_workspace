@@ -1,0 +1,12 @@
+../Core/Src/lvgl/src/themes/default/../../../src/core/../misc/lv_style.h:525:20:lv_style_set_size	1
+../Core/Src/lvgl/src/themes/default/../../../src/core/../misc/lv_style.h:531:20:lv_style_set_pad_all	1
+../Core/Src/lvgl/src/themes/default/../../../src/core/../misc/lv_style.h:539:20:lv_style_set_pad_hor	1
+../Core/Src/lvgl/src/themes/default/../../../src/core/../misc/lv_style.h:545:20:lv_style_set_pad_ver	1
+../Core/Src/lvgl/src/themes/default/../../../src/core/../misc/lv_style.h:551:20:lv_style_set_pad_gap	1
+../Core/Src/lvgl/src/themes/default/lv_theme_default.c:197:13:style_init	247
+../Core/Src/lvgl/src/themes/default/lv_theme_default.c:624:14:lv_theme_default_init	15
+../Core/Src/lvgl/src/themes/default/lv_theme_default.c:678:6:lv_theme_default_is_inited	2
+../Core/Src/lvgl/src/themes/default/lv_theme_default.c:685:14:lv_theme_default_get	2
+../Core/Src/lvgl/src/themes/default/lv_theme_default.c:694:6:lv_theme_default_deinit	4
+../Core/Src/lvgl/src/themes/default/lv_theme_default.c:714:13:theme_apply	67
+../Core/Src/lvgl/src/themes/default/lv_theme_default.c:1204:13:style_init_reset	2

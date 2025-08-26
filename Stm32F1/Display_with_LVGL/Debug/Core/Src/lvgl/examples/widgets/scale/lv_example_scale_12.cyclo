@@ -1,0 +1,4 @@
+../Core/Src/lvgl/examples/widgets/scale/lv_example_scale_12.c:7:21:heading_to_cardinal	11
+../Core/Src/lvgl/examples/widgets/scale/lv_example_scale_12.c:25:13:set_heading_value	1
+../Core/Src/lvgl/examples/widgets/scale/lv_example_scale_12.c:32:13:draw_event_cb	6
+../Core/Src/lvgl/examples/widgets/scale/lv_example_scale_12.c:55:6:lv_example_scale_12	1

@@ -1,0 +1,11 @@
+../Core/Src/lvgl/src/font/lv_font_fmt_txt.c:90:14:lv_font_get_bitmap_fmt_txt	80	static
+../Core/Src/lvgl/src/font/lv_font_fmt_txt.c:221:6:lv_font_get_glyph_dsc_fmt_txt	56	static
+../Core/Src/lvgl/src/font/lv_font_fmt_txt.c:278:17:get_glyph_dsc_id	80	static
+../Core/Src/lvgl/src/font/lv_font_fmt_txt.c:331:15:get_kern_value	96	static
+../Core/Src/lvgl/src/font/lv_font_fmt_txt.c:387:12:kern_pair_8_compare	24	static
+../Core/Src/lvgl/src/font/lv_font_fmt_txt.c:397:12:kern_pair_16_compare	24	static
+../Core/Src/lvgl/src/font/lv_font_fmt_txt.c:617:12:unicode_list_compare	16	static
+../Core/Src/lvgl/src/font/lv_font_fmt_txt.c:622:20:builtin_font_create_cb	24	static
+../Core/Src/lvgl/src/font/lv_font_fmt_txt.c:641:13:builtin_font_delete_cb	16	static
+../Core/Src/lvgl/src/font/lv_font_fmt_txt.c:647:15:builtin_font_dup_src_cb	32	static
+../Core/Src/lvgl/src/font/lv_font_fmt_txt.c:675:13:builtin_font_free_src_cb	16	static

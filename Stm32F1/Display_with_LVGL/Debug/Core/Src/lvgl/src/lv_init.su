@@ -1,0 +1,6 @@
+../Core/Src/lvgl/src/draw/../misc/../stdlib/lv_string.h:73:20:lv_memzero	16	static
+../Core/Src/lvgl/src/lv_init.c:126:20:lv_global_init	16	static
+../Core/Src/lvgl/src/lv_init.c:158:20:lv_cleanup_devices	16	static
+../Core/Src/lvgl/src/lv_init.c:169:6:lv_is_initialized	4	static
+../Core/Src/lvgl/src/lv_init.c:179:6:lv_init	32	static
+../Core/Src/lvgl/src/lv_init.c:417:6:lv_deinit	8	static

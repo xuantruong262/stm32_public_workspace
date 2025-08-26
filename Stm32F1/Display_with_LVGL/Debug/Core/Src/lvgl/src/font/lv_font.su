@@ -1,0 +1,12 @@
+../Core/Src/lvgl/src/font/../draw/../misc/../stdlib/lv_string.h:73:20:lv_memzero	16	static
+../Core/Src/lvgl/src/font/../misc/lv_text_private.h:183:20:lv_text_is_marker	16	static
+../Core/Src/lvgl/src/font/lv_font.c:49:14:lv_font_get_glyph_bitmap	32	static
+../Core/Src/lvgl/src/font/lv_font.c:62:14:lv_font_get_glyph_static_bitmap	32	static
+../Core/Src/lvgl/src/font/lv_font.c:80:6:lv_font_glyph_release_draw_data	24	static
+../Core/Src/lvgl/src/font/lv_font.c:94:6:lv_font_get_glyph_dsc	48	static
+../Core/Src/lvgl/src/font/lv_font.c:154:10:lv_font_get_glyph_width	56	static
+../Core/Src/lvgl/src/font/lv_font.c:166:6:lv_font_set_kerning	16	static
+../Core/Src/lvgl/src/font/lv_font.c:172:9:lv_font_get_line_height	16	static
+../Core/Src/lvgl/src/font/lv_font.c:178:19:lv_font_get_default	4	static
+../Core/Src/lvgl/src/font/lv_font.c:183:6:lv_font_info_is_equal	24	static
+../Core/Src/lvgl/src/font/lv_font.c:197:6:lv_font_has_static_bitmap	16	static

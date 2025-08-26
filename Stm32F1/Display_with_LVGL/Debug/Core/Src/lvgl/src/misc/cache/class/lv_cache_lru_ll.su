@@ -1,0 +1,17 @@
+../Core/Src/lvgl/src/misc/cache/class/../../../stdlib/lv_string.h:73:20:lv_memzero	16	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:149:15:alloc_new_node	32	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:171:15:alloc_cb	16	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:184:13:init_cnt_cb	32	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:202:13:init_size_cb	32	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:220:13:destroy_cb	24	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:236:27:get_cb	40	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:267:27:add_cb	32	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:290:13:remove_cb	32	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:310:13:drop_cb	40	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:334:13:drop_all_cb	32	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:366:27:get_victim_cb	32	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:385:36:reserve_cond_cb	32	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:409:17:cnt_get_data_size_cb	16	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:415:17:size_get_data_size_cb	24	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:421:20:cache_iter_create_cb	16	static
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_lru_ll.c:426:20:cache_iter_next_cb	40	static

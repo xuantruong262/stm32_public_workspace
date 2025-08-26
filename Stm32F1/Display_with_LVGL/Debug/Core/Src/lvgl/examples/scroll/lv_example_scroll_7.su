@@ -1,0 +1,5 @@
+../Core/Src/lvgl/examples/scroll/lv_example_scroll_7.c:10:19:load_item	24	static
+../Core/Src/lvgl/examples/scroll/lv_example_scroll_7.c:19:13:update_scroll	56	static
+../Core/Src/lvgl/examples/scroll/lv_example_scroll_7.c:77:13:scroll_cb	24	static
+../Core/Src/lvgl/examples/scroll/lv_example_scroll_7.c:83:13:checkbox_cb	32	static
+../Core/Src/lvgl/examples/scroll/lv_example_scroll_7.c:94:6:lv_example_scroll_7	24	static

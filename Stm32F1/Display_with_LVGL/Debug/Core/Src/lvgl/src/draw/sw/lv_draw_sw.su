@@ -1,0 +1,9 @@
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw.c:75:6:lv_draw_sw_init	16	static
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw.c:115:6:lv_draw_sw_deinit	8	static
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw.c:126:16:lv_draw_sw_delete	16	static
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw.c:151:6:lv_draw_sw_register_blend_handler	24	static
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw.c:176:6:lv_draw_sw_unregister_blend_handler	24	static
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw.c:191:28:lv_draw_sw_get_blend_handler	24	static
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw.c:208:16:evaluate	24	static
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw.c:250:16:dispatch	32	static
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw.c:383:13:execute_drawing	16	static

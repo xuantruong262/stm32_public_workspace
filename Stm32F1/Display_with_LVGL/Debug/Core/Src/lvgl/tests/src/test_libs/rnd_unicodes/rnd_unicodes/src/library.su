@@ -1,0 +1,5 @@
+../Core/Src/lvgl/tests/src/test_libs/rnd_unicodes/rnd_unicodes/src/library.c:28:32:RANDOM_CALL_PROCESS	4	static
+../Core/Src/lvgl/tests/src/test_libs/rnd_unicodes/rnd_unicodes/src/library.c:59:12:unicode_to_utf8_bytes_len	16	static
+../Core/Src/lvgl/tests/src/test_libs/rnd_unicodes/rnd_unicodes/src/library.c:81:12:unicode_to_uft8	32	static
+../Core/Src/lvgl/tests/src/test_libs/rnd_unicodes/rnd_unicodes/src/library.c:130:12:random_one_utf8_char	32	static
+../Core/Src/lvgl/tests/src/test_libs/rnd_unicodes/rnd_unicodes/src/library.c:141:5:random_utf8_chars	48	static

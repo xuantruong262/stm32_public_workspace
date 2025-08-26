@@ -1,0 +1,9 @@
+../Core/Src/lvgl/examples/widgets/menu/../../../src/core/lv_obj_style_gen.h:166:23:lv_obj_get_style_pad_left	1
+../Core/Src/lvgl/examples/widgets/menu/../../../src/core/lv_obj_style_gen.h:220:26:lv_obj_get_style_bg_color	1
+../Core/Src/lvgl/examples/widgets/menu/../../../src/core/lv_obj_style.h:272:20:lv_obj_set_style_pad_hor	1
+../Core/Src/lvgl/examples/widgets/menu/lv_example_menu_5.c:19:6:lv_example_menu_5	3
+../Core/Src/lvgl/examples/widgets/menu/lv_example_menu_5.c:115:13:back_event_handler	2
+../Core/Src/lvgl/examples/widgets/menu/lv_example_menu_5.c:128:13:switch_handler	3
+../Core/Src/lvgl/examples/widgets/menu/lv_example_menu_5.c:148:19:create_text	6
+../Core/Src/lvgl/examples/widgets/menu/lv_example_menu_5.c:176:19:create_slider	2
+../Core/Src/lvgl/examples/widgets/menu/lv_example_menu_5.c:193:19:create_switch	1

@@ -1,0 +1,16 @@
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:56:30:lv_memcpy	11
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:118:28:lv_memset	6
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:148:30:lv_memmove	6
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:174:5:lv_memcmp	3
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:186:8:lv_strlen	2
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:194:8:lv_strnlen	3
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:202:8:lv_strlcpy	5
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:215:8:lv_strncpy	4
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:227:8:lv_strcpy	2
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:234:5:lv_strcmp	3
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:243:5:lv_strncmp	6
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:259:8:lv_strdup	2
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:269:8:lv_strndup	2
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:280:8:lv_strcat	1
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:286:8:lv_strncat	4
+../Core/Src/lvgl/src/stdlib/builtin/lv_string_builtin.c:300:8:lv_strchr	3

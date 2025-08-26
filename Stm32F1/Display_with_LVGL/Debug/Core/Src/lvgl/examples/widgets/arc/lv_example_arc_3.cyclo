@@ -1,0 +1,7 @@
+../Core/Src/lvgl/examples/widgets/arc/../../../src/core/lv_obj_style.h:264:20:lv_obj_set_style_pad_all	1
+../Core/Src/lvgl/examples/widgets/arc/../../../src/core/lv_obj_style.h:284:20:lv_obj_set_style_margin_all	1
+../Core/Src/lvgl/examples/widgets/arc/lv_example_arc_3.c:28:13:anim_move_cb	1
+../Core/Src/lvgl/examples/widgets/arc/lv_example_arc_3.c:37:13:anim_cleanup_cb	1
+../Core/Src/lvgl/examples/widgets/arc/lv_example_arc_3.c:42:13:arc_click_cb	5
+../Core/Src/lvgl/examples/widgets/arc/lv_example_arc_3.c:103:13:create_slice	3
+../Core/Src/lvgl/examples/widgets/arc/lv_example_arc_3.c:148:6:lv_example_arc_3	1

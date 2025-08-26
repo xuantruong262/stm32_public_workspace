@@ -1,0 +1,4 @@
+../Core/Src/lvgl/examples/widgets/textarea/../../../src/core/../misc/lv_style.h:531:20:lv_style_set_pad_all	16	static
+../Core/Src/lvgl/examples/widgets/textarea/../../../src/core/../misc/lv_style.h:539:20:lv_style_set_pad_hor	16	static
+../Core/Src/lvgl/examples/widgets/textarea/lv_example_textarea_4.c:4:13:create_styled_textarea_cursor	32	static
+../Core/Src/lvgl/examples/widgets/textarea/lv_example_textarea_4.c:16:6:lv_example_textarea_4	32	static

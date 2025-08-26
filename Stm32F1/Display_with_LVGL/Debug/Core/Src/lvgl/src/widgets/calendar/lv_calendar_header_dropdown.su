@@ -1,0 +1,6 @@
+../Core/Src/lvgl/src/widgets/calendar/lv_calendar_header_dropdown.c:64:12:lv_calendar_add_header_dropdown	24	static
+../Core/Src/lvgl/src/widgets/calendar/lv_calendar_header_dropdown.c:72:6:lv_calendar_header_dropdown_set_year_list	32	static
+../Core/Src/lvgl/src/widgets/calendar/lv_calendar_header_dropdown.c:101:13:my_constructor	32	static
+../Core/Src/lvgl/src/widgets/calendar/lv_calendar_header_dropdown.c:127:13:month_event_cb	40	static
+../Core/Src/lvgl/src/widgets/calendar/lv_calendar_header_dropdown.c:142:13:year_event_cb	56	static
+../Core/Src/lvgl/src/widgets/calendar/lv_calendar_header_dropdown.c:167:13:value_changed_event_cb	48	static

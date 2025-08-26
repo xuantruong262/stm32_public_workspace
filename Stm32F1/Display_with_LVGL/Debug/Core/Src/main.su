@@ -1,0 +1,9 @@
+../Core/Src/main.c:76:9:Check_FPS	24	static
+../Core/Src/main.c:97:5:main	4152	static
+../Core/Src/main.c:186:6:SystemClock_Config	72	static
+../Core/Src/main.c:227:13:MX_IWDG_Init	8	static
+../Core/Src/main.c:255:13:MX_SPI1_Init	8	static
+../Core/Src/main.c:293:13:MX_SPI2_Init	8	static
+../Core/Src/main.c:329:13:MX_DMA_Init	16	static
+../Core/Src/main.c:356:13:MX_GPIO_Init	40	static
+../Core/Src/main.c:412:6:Error_Handler	4	static,ignoring_inline_asm

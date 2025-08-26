@@ -1,0 +1,17 @@
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:157:20:get_entry	1
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:165:20:set_second_chance	2
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:175:20:has_second_chance	1
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:180:15:alloc_new_entry	7
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:229:15:alloc_cb	1
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:234:13:init_cnt_cb	4
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:242:13:destroy_cb	2
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:261:27:get_cb	5
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:292:27:add_cb	4
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:316:13:remove_cb	4
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:343:13:drop_cb	5
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:372:13:drop_all_cb	4
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:406:27:get_possible_victim	5
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:433:27:get_victim_cb	4
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:467:36:reserve_cond_cb	3
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:488:20:cache_iter_create_cb	1
+../Core/Src/lvgl/src/misc/cache/class/lv_cache_sc_da.c:494:20:cache_iter_next_cb	3

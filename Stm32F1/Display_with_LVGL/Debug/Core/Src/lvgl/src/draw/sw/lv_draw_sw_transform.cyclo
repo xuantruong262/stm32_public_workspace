@@ -1,0 +1,11 @@
+../Core/Src/lvgl/src/draw/sw/../../misc/../font/../draw/../misc/lv_color.h:449:46:lv_color_swap_16	1
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw_transform.c:110:6:lv_draw_sw_transform	23
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw_transform.c:315:13:transform_rgb888	23
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw_transform.c:415:13:transform_argb8888	27
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw_transform.c:508:21:unpremultiply	2
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw_transform.c:525:13:transform_argb8888_premultiplied	27
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw_transform.c:640:13:transform_rgb565a8	28
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw_transform.c:755:13:transform_rgb565a8_swapped	28
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw_transform.c:871:13:transform_a8	23
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw_transform.c:949:13:transform_l8_to_al88	23
+../Core/Src/lvgl/src/draw/sw/lv_draw_sw_transform.c:1027:13:transform_point_upscaled	7

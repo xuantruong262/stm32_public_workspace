@@ -1,0 +1,10 @@
+../Core/Src/lvgl/src/themes/mono/../../core/../misc/lv_style.h:525:20:lv_style_set_size	24	static
+../Core/Src/lvgl/src/themes/mono/../../core/../misc/lv_style.h:531:20:lv_style_set_pad_all	16	static
+../Core/Src/lvgl/src/themes/mono/../../core/../misc/lv_style.h:551:20:lv_style_set_pad_gap	16	static
+../Core/Src/lvgl/src/themes/mono/lv_theme_mono.c:87:13:style_init	104	static
+../Core/Src/lvgl/src/themes/mono/lv_theme_mono.c:184:14:lv_theme_mono_init	40	static
+../Core/Src/lvgl/src/themes/mono/lv_theme_mono.c:212:6:lv_theme_mono_is_inited	16	static
+../Core/Src/lvgl/src/themes/mono/lv_theme_mono.c:219:14:lv_theme_mono_get	8	static
+../Core/Src/lvgl/src/themes/mono/lv_theme_mono.c:228:6:lv_theme_mono_deinit	24	static
+../Core/Src/lvgl/src/themes/mono/lv_theme_mono.c:248:13:theme_apply	24	static
+../Core/Src/lvgl/src/themes/mono/lv_theme_mono.c:535:13:style_init_reset	16	static

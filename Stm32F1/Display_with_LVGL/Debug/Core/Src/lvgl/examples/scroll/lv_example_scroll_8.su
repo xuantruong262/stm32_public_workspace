@@ -1,0 +1,11 @@
+../Core/Src/lvgl/examples/scroll/../../src/core/lv_obj_style_gen.h:154:23:lv_obj_get_style_pad_top	24	static
+../Core/Src/lvgl/examples/scroll/../../src/core/lv_obj_style_gen.h:160:23:lv_obj_get_style_pad_bottom	24	static
+../Core/Src/lvgl/examples/scroll/../../src/core/lv_obj_style_gen.h:166:23:lv_obj_get_style_pad_left	24	static
+../Core/Src/lvgl/examples/scroll/../../src/core/lv_obj_style_gen.h:172:23:lv_obj_get_style_pad_right	24	static
+../Core/Src/lvgl/examples/scroll/../../src/core/lv_obj_style_gen.h:178:23:lv_obj_get_style_pad_row	24	static
+../Core/Src/lvgl/examples/scroll/../../src/core/lv_obj_style_gen.h:184:23:lv_obj_get_style_pad_column	24	static
+../Core/Src/lvgl/examples/scroll/lv_example_scroll_8.c:14:16:get_content_width	40	static
+../Core/Src/lvgl/examples/scroll/lv_example_scroll_8.c:29:13:cont_row_scroll_event_cb	48	static
+../Core/Src/lvgl/examples/scroll/lv_example_scroll_8.c:58:16:get_content_height	40	static
+../Core/Src/lvgl/examples/scroll/lv_example_scroll_8.c:73:13:cont_col_scroll_event_cb	48	static
+../Core/Src/lvgl/examples/scroll/lv_example_scroll_8.c:101:6:lv_example_scroll_8	40	static
