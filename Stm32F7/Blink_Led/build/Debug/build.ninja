@@ -110,7 +110,7 @@ build Blink_Led.elf: C_EXECUTABLE_LINKER__Blink_Led_Debug cmake/stm32cubemx/CMak
   LINK_FLAGS = -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard  -T "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/Blink_Led/STM32H723XG_FLASH.ld" --specs=nano.specs -Wl,-Map=Blink_Led.map -Wl,--gc-sections -Wl,--print-memory-usage
   LINK_LIBRARIES = -lm
   OBJECT_DIR = CMakeFiles\Blink_Led.dir
-  POST_BUILD = cd .
+  POST_BUILD = C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\ADMIN\Desktop\stm32_git_workspace\stm32_public_workspace\Stm32F7\Blink_Led\build\Debug && arm-none-eabi-objcopy -O binary C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/Blink_Led/build/Debug/Blink_Led.elf Blink_Led.bin && arm-none-eabi-objcopy -O ihex C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/Blink_Led/build/Debug/Blink_Led.elf Blink_Led.hex"
   PRE_LINK = cd .
   TARGET_FILE = Blink_Led.elf
   TARGET_PDB = Blink_Led.elf.dbg

@@ -1,0 +1,9 @@
+{
+    // "cortex-debug.openocdPath": "/usr/bin/openocd",
+    // "cortex-debug.gdbPath": "/usr/bin/gdb-multiarch",
+    "files.associations": {
+        "main.h": "c",
+        "stm32f1xx_hal_def.h": "c"
+    },
+    "cortex-debug.variableUseNaturalFormat": false
+}

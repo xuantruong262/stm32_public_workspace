@@ -1,0 +1,6 @@
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F1/UFirmware_uart_binCMakeFiles/UFirmware_uart_bin.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F1/UFirmware_uart_binCMakeFiles/edit_cache.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F1/UFirmware_uart_binCMakeFiles/rebuild_cache.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F1/UFirmware_uart_bincmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F1/UFirmware_uart_bincmake/stm32cubemx/CMakeFiles/edit_cache.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F1/UFirmware_uart_bincmake/stm32cubemx/CMakeFiles/rebuild_cache.dir
