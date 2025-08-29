@@ -79,8 +79,6 @@ uint32_t total_data_rx = 0;
 
 void Write_Flash(uint32_t Address, uint32_t *Data, uint32_t Size) {
     HAL_FLASH_Unlock();
-
-// Cấu hình xóa sector
     FLASH_EraseInitTypeDef EraseInitStruct;
     uint32_t SectorError;
 
@@ -88,14 +86,11 @@ void Write_Flash(uint32_t Address, uint32_t *Data, uint32_t Size) {
     EraseInitStruct.PageAddress = Address; // Địa chỉ bắt đầu của sector (Sector 32)
     EraseInitStruct.NbPages = 5; // Số page cần xóa (1 page = 1KB)
 
-    // Thực hiện xóa
     if (HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK) {
         // Xử lý lỗi
         HAL_FLASH_Lock();
         return;
     }
-
-    // Ghi dữ liệu
     for (uint32_t i = 0; i < Size; i++) {
         if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, Address + i * 4, Data[i]) != HAL_OK) {
             // Xử lý lỗi ghi
