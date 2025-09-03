@@ -1,0 +1,33 @@
+CMakeFiles/STM32F103C8_Project.elf.dir/Core/Src/system_stm32f1xx.c.obj: \
+ C:/Users/OS/Desktop/Cmake_practice/Core/Src/system_stm32f1xx.c \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/CMSIS/Include/core_cm3.h \
+ D:\ST\STM32CubeCLT_1.16.0\GNU-tools-for-STM32\bin\../lib/gcc/arm-none-eabi/12.3.1/include/stdint.h \
+ D:\ST\STM32CubeCLT_1.16.0\GNU-tools-for-STM32\bin\../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include/stdint.h \
+ D:\ST\STM32CubeCLT_1.16.0\GNU-tools-for-STM32\bin\../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include/machine/_default_types.h \
+ D:\ST\STM32CubeCLT_1.16.0\GNU-tools-for-STM32\bin\../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include/sys/features.h \
+ D:\ST\STM32CubeCLT_1.16.0\GNU-tools-for-STM32\bin\../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include/_newlib_version.h \
+ D:\ST\STM32CubeCLT_1.16.0\GNU-tools-for-STM32\bin\../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include/sys/_intsup.h \
+ D:\ST\STM32CubeCLT_1.16.0\GNU-tools-for-STM32\bin\../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include/sys/_stdint.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/CMSIS/Include/cmsis_version.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/CMSIS/Include/cmsis_compiler.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/CMSIS/Include/cmsis_gcc.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
+ C:/Users/OS/Desktop/Cmake_practice/Core/Inc/stm32f1xx_hal_conf.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h \
+ D:\ST\STM32CubeCLT_1.16.0\GNU-tools-for-STM32\bin\../lib/gcc/arm-none-eabi/12.3.1/include/stddef.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc_ex.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio_ex.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_exti.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma_ex.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
+ C:/Users/OS/Desktop/Cmake_practice/Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h

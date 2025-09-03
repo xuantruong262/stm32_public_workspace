@@ -1,0 +1,242 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineSystem.cmake:228 (message)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      The target system is: Generic -  - arm
+      The host system is: Windows - 10.0.19045 - AMD64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+      Compiler: D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/arm-none-eabi-gcc.exe 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      1
+      D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/ld.exe: D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/lib\\libc.a(libc_a-exit.o): in function `exit':
+      (.text.exit+0x28): undefined reference to `_exit'
+      D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/ld.exe: D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/lib\\libc.a(libc_a-closer.o): in function `_close_r':
+      (.text._close_r+0x18): undefined reference to `_close'
+      D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/ld.exe: D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/lib\\libc.a(libc_a-lseekr.o): in function `_lseek_r':
+      (.text._lseek_r+0x20): undefined reference to `_lseek'
+      D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/ld.exe: D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/lib\\libc.a(libc_a-readr.o): in function `_read_r':
+      (.text._read_r+0x20): undefined reference to `_read'
+      D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/ld.exe: D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/lib\\libc.a(libc_a-writer.o): in function `_write_r':
+      (.text._write_r+0x20): undefined reference to `_write'
+      D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/ld.exe: D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/lib\\libc.a(libc_a-sbrkr.o): in function `_sbrk_r':
+      (.text._sbrk_r+0x18): undefined reference to `_sbrk'
+      collect2.exe: error: ld returned 1 exit status
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler: D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/arm-none-eabi-gcc.exe 
+      Build flags: 
+      Id flags: -c 
+      
+      The output was:
+      0
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.o"
+      
+      The C compiler identification is GNU, found in:
+        C:/Users/OS/Desktop/Cmake_practice/CMakeFiles/3.28.1/CompilerIdC/CMakeCCompilerId.o
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:1131 (message)"
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineASMCompiler.cmake:131 (CMAKE_DETERMINE_COMPILER_ID_VENDOR)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Checking whether the ASM compiler is GNU using "--version" matched "(GNU assembler)|(GCC)|(Free Software Foundation)":
+      arm-none-eabi-gcc.exe (GNU Tools for STM32 12.3.rel1.20240612-1315) 12.3.1 20230626
+      Copyright (C) 2022 Free Software Foundation, Inc.
+      This is free software; see the source for copying conditions.  There is NO
+      warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "C:/Users/OS/Desktop/Cmake_practice/CMakeFiles/CMakeScratch/TryCompile-kzuygs"
+      binary: "C:/Users/OS/Desktop/Cmake_practice/CMakeFiles/CMakeScratch/TryCompile-kzuygs"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/OS/Desktop/Cmake_practice/CMakeFiles/CMakeScratch/TryCompile-kzuygs'
+        
+        Run Build Command(s): D:/ST/STM32CubeCLT_1.16.0/CMake/bin/cmake.exe -E env VERBOSE=1 C:/msys64/ucrt64/bin/make.exe -f Makefile cmTC_6c630/fast
+        /ucrt64/bin/make  -f CMakeFiles/cmTC_6c630.dir/build.make CMakeFiles/cmTC_6c630.dir/build
+        make[1]: Entering directory '/c/Users/OS/Desktop/Cmake_practice/CMakeFiles/CMakeScratch/TryCompile-kzuygs'
+        Building C object CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj
+        /D/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/arm-none-eabi-gcc.exe   -v -o CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj -c /D/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeCCompilerABI.c
+        Using built-in specs.
+        COLLECT_GCC=D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\arm-none-eabi-gcc.exe
+        Target: arm-none-eabi
+        Configured with: /build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/src/gcc/configure --build=x86_64-linux-gnu --host=x86_64-w64-mingw32 --target=arm-none-eabi --prefix=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw --libexecdir=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/lib --infodir=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/share/doc/gcc-arm-none-eabi/info --mandir=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/share/doc/gcc-arm-none-eabi/man --htmldir=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/share/doc/gcc-arm-none-eabi/html --pdfdir=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/share/doc/gcc-arm-none-eabi/pdf --enable-languages=c,c++ --enable-mingw-wildcard --disable-decimal-float --disable-libffi --disable-libgomp --disable-libmudflap --disable-libquadmath --disable-libssp --disable-libstdcxx-pch --disable-nls --disable-shared --disable-threads --disable-tls --with-gnu-as --with-gnu-ld --with-headers=yes --with-newlib --with-python-dir=share/gcc-arm-none-eabi --with-sysroot=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/arm-none-eabi --with-libiconv-prefix=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/build-mingw/host-libs/usr --with-gmp=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/build-mingw/host-libs/usr --with-mpfr=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/build-mingw/host-libs/usr --with-mpc=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/build-mingw/host-libs/usr --with-isl=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/build-mingw/host-libs/usr --with-host-libstdcxx='-static-libgcc -Wl,-Bstatic,-lstdc++,-Bdynamic -lm' --with-pkgversion='GNU Tools for STM32 12.3.rel1.20240612-1315' --with-multilib-list=rmprofile,aprofile
+        Thread model: single
+        Supported LTO compression algorithms: zlib
+        gcc version 12.3.1 20230626 (GNU Tools for STM32 12.3.rel1.20240612-1315) 
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj' '-c' '-mcpu=arm7tdmi' '-mfloat-abi=soft' '-marm' '-mlibarch=armv4t' '-march=armv4t' '-dumpdir' 'CMakeFiles/cmTC_6c630.dir/'
+         D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/cc1.exe -quiet -v -iprefix D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../lib/gcc/arm-none-eabi/12.3.1/ -isysroot D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../arm-none-eabi -D__USES_INITFINI__ D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_6c630.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mcpu=arm7tdmi -mfloat-abi=soft -marm -mlibarch=armv4t -march=armv4t -version -o C:\\Users\\OS\\AppData\\Local\\Temp\\ccFth0cI.s
+        GNU C17 (GNU Tools for STM32 12.3.rel1.20240612-1315) version 12.3.1 20230626 (arm-none-eabi)
+        	compiled by GNU C version 7.3-win32 20180312, GMP version 6.2.1, MPFR version 3.1.6, MPC version 1.0.3, isl version isl-0.15-1-g835ea3a-GMP
+        
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        ignoring nonexistent directory "D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../arm-none-eabi/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/lib/gcc/arm-none-eabi/12.3.1/../../../../include"
+        ignoring nonexistent directory "D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../arm-none-eabi/usr/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../lib/gcc/arm-none-eabi/12.3.1/include
+         D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../lib/gcc/arm-none-eabi/12.3.1/include-fixed
+         D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include
+         D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/include
+         D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/include-fixed
+         D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include
+        End of search list.
+        GNU C17 (GNU Tools for STM32 12.3.rel1.20240612-1315) version 12.3.1 20230626 (arm-none-eabi)
+        	compiled by GNU C version 7.3-win32 20180312, GMP version 6.2.1, MPFR version 3.1.6, MPC version 1.0.3, isl version isl-0.15-1-g835ea3a-GMP
+        
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        Compiler executable checksum: 8c85bce3e8a10a7ec33a6a6bd0176b53
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj' '-c' '-mcpu=arm7tdmi' '-mfloat-abi=soft' '-marm' '-mlibarch=armv4t' '-march=armv4t' '-dumpdir' 'CMakeFiles/cmTC_6c630.dir/'
+         D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/as.exe -v -march=armv4t -mfloat-abi=soft -meabi=5 -o CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj C:\\Users\\OS\\AppData\\Local\\Temp\\ccFth0cI.s
+        GNU assembler version 2.40.0 (arm-none-eabi) using BFD version (GNU Tools for STM32 12.3.rel1.20240612-1315) 2.40.0.20230627
+        COMPILER_PATH=D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/;D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/;D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/
+        LIBRARY_PATH=D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/;D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/;D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/lib/;D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../arm-none-eabi/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj' '-c' '-mcpu=arm7tdmi' '-mfloat-abi=soft' '-marm' '-mlibarch=armv4t' '-march=armv4t' '-dumpdir' 'CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.'
+        Linking C static library libcmTC_6c630.a
+        /D/ST/STM32CubeCLT_1.16.0/CMake/bin/cmake.exe -P CMakeFiles/cmTC_6c630.dir/cmake_clean_target.cmake
+        /D/ST/STM32CubeCLT_1.16.0/CMake/bin/cmake.exe -E cmake_link_script CMakeFiles/cmTC_6c630.dir/link.txt --verbose=1
+        D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/arm-none-eabi-ar.exe qc libcmTC_6c630.a CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj
+        D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/arm-none-eabi-ranlib.exe libcmTC_6c630.a
+        make[1]: Leaving directory '/c/Users/OS/Desktop/Cmake_practice/CMakeFiles/CMakeScratch/TryCompile-kzuygs'
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:127 (message)"
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed C implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/include]
+          add: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/include-fixed]
+          add: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include]
+          add: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/include]
+          add: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/include-fixed]
+          add: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include]
+        end of search list found
+        collapse include dir [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/include] ==> [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/arm-none-eabi/12.3.1/include]
+        collapse include dir [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/include-fixed] ==> [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/arm-none-eabi/12.3.1/include-fixed]
+        collapse include dir [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include] ==> [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/arm-none-eabi/include]
+        collapse include dir [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/include] ==> [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/arm-none-eabi/12.3.1/include]
+        collapse include dir [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/include-fixed] ==> [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/arm-none-eabi/12.3.1/include-fixed]
+        collapse include dir [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include] ==> [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/arm-none-eabi/include]
+        implicit include dirs: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/arm-none-eabi/12.3.1/include;D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/arm-none-eabi/12.3.1/include-fixed;D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/arm-none-eabi/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:159 (message)"
+      - "D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed C implicit link information:
+        link line regex: [^( *|.*[/\\])(arm-none-eabi-ld\\.exe|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        ignore line: [Change Dir: 'C:/Users/OS/Desktop/Cmake_practice/CMakeFiles/CMakeScratch/TryCompile-kzuygs']
+        ignore line: []
+        ignore line: [Run Build Command(s): D:/ST/STM32CubeCLT_1.16.0/CMake/bin/cmake.exe -E env VERBOSE=1 C:/msys64/ucrt64/bin/make.exe -f Makefile cmTC_6c630/fast]
+        ignore line: [/ucrt64/bin/make  -f CMakeFiles/cmTC_6c630.dir/build.make CMakeFiles/cmTC_6c630.dir/build]
+        ignore line: [make[1]: Entering directory '/c/Users/OS/Desktop/Cmake_practice/CMakeFiles/CMakeScratch/TryCompile-kzuygs']
+        ignore line: [Building C object CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj]
+        ignore line: [/D/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/arm-none-eabi-gcc.exe   -v -o CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj -c /D/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeCCompilerABI.c]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\arm-none-eabi-gcc.exe]
+        ignore line: [Target: arm-none-eabi]
+        ignore line: [Configured with: /build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/src/gcc/configure --build=x86_64-linux-gnu --host=x86_64-w64-mingw32 --target=arm-none-eabi --prefix=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw --libexecdir=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/lib --infodir=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/share/doc/gcc-arm-none-eabi/info --mandir=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/share/doc/gcc-arm-none-eabi/man --htmldir=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/share/doc/gcc-arm-none-eabi/html --pdfdir=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/share/doc/gcc-arm-none-eabi/pdf --enable-languages=c,c++ --enable-mingw-wildcard --disable-decimal-float --disable-libffi --disable-libgomp --disable-libmudflap --disable-libquadmath --disable-libssp --disable-libstdcxx-pch --disable-nls --disable-shared --disable-threads --disable-tls --with-gnu-as --with-gnu-ld --with-headers=yes --with-newlib --with-python-dir=share/gcc-arm-none-eabi --with-sysroot=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/arm-none-eabi --with-libiconv-prefix=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/build-mingw/host-libs/usr --with-gmp=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/build-mingw/host-libs/usr --with-mpfr=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/build-mingw/host-libs/usr --with-mpc=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/build-mingw/host-libs/usr --with-isl=/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/build-mingw/host-libs/usr --with-host-libstdcxx='-static-libgcc -Wl,-Bstatic,-lstdc++,-Bdynamic -lm' --with-pkgversion='GNU Tools for STM32 12.3.rel1.20240612-1315' --with-multilib-list=rmprofile,aprofile]
+        ignore line: [Thread model: single]
+        ignore line: [Supported LTO compression algorithms: zlib]
+        ignore line: [gcc version 12.3.1 20230626 (GNU Tools for STM32 12.3.rel1.20240612-1315) ]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj' '-c' '-mcpu=arm7tdmi' '-mfloat-abi=soft' '-marm' '-mlibarch=armv4t' '-march=armv4t' '-dumpdir' 'CMakeFiles/cmTC_6c630.dir/']
+        ignore line: [ D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/cc1.exe -quiet -v -iprefix D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../lib/gcc/arm-none-eabi/12.3.1/ -isysroot D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../arm-none-eabi -D__USES_INITFINI__ D:/ST/STM32CubeCLT_1.16.0/CMake/share/cmake-3.28/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_6c630.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mcpu=arm7tdmi -mfloat-abi=soft -marm -mlibarch=armv4t -march=armv4t -version -o C:\\Users\\OS\\AppData\\Local\\Temp\\ccFth0cI.s]
+        ignore line: [GNU C17 (GNU Tools for STM32 12.3.rel1.20240612-1315) version 12.3.1 20230626 (arm-none-eabi)]
+        ignore line: [	compiled by GNU C version 7.3-win32 20180312  GMP version 6.2.1  MPFR version 3.1.6  MPC version 1.0.3  isl version isl-0.15-1-g835ea3a-GMP]
+        ignore line: []
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [ignoring nonexistent directory "D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../arm-none-eabi/build/gnu-tools-for-stm32_12.3.rel1.20240612-1315/install-mingw/lib/gcc/arm-none-eabi/12.3.1/../../../../include"]
+        ignore line: [ignoring nonexistent directory "D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../arm-none-eabi/usr/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../lib/gcc/arm-none-eabi/12.3.1/include]
+        ignore line: [ D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../lib/gcc/arm-none-eabi/12.3.1/include-fixed]
+        ignore line: [ D:\\ST\\STM32CubeCLT_1.16.0\\GNU-tools-for-STM32\\bin\\../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include]
+        ignore line: [ D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/include]
+        ignore line: [ D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/include-fixed]
+        ignore line: [ D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/lib/gcc/../../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/include]
+        ignore line: [End of search list.]
+        ignore line: [GNU C17 (GNU Tools for STM32 12.3.rel1.20240612-1315) version 12.3.1 20230626 (arm-none-eabi)]
+        ignore line: [	compiled by GNU C version 7.3-win32 20180312  GMP version 6.2.1  MPFR version 3.1.6  MPC version 1.0.3  isl version isl-0.15-1-g835ea3a-GMP]
+        ignore line: []
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [Compiler executable checksum: 8c85bce3e8a10a7ec33a6a6bd0176b53]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj' '-c' '-mcpu=arm7tdmi' '-mfloat-abi=soft' '-marm' '-mlibarch=armv4t' '-march=armv4t' '-dumpdir' 'CMakeFiles/cmTC_6c630.dir/']
+        ignore line: [ D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/as.exe -v -march=armv4t -mfloat-abi=soft -meabi=5 -o CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj C:\\Users\\OS\\AppData\\Local\\Temp\\ccFth0cI.s]
+        ignore line: [GNU assembler version 2.40.0 (arm-none-eabi) using BFD version (GNU Tools for STM32 12.3.rel1.20240612-1315) 2.40.0.20230627]
+        ignore line: [COMPILER_PATH=D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/]
+        ignore line: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/]
+        ignore line: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/]
+        ignore line: [LIBRARY_PATH=D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/]
+        ignore line: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/]
+        ignore line: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/lib/]
+        ignore line: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/../arm-none-eabi/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj' '-c' '-mcpu=arm7tdmi' '-mfloat-abi=soft' '-marm' '-mlibarch=armv4t' '-march=armv4t' '-dumpdir' 'CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.']
+        ignore line: [Linking C static library libcmTC_6c630.a]
+        ignore line: [/D/ST/STM32CubeCLT_1.16.0/CMake/bin/cmake.exe -P CMakeFiles/cmTC_6c630.dir/cmake_clean_target.cmake]
+        ignore line: [/D/ST/STM32CubeCLT_1.16.0/CMake/bin/cmake.exe -E cmake_link_script CMakeFiles/cmTC_6c630.dir/link.txt --verbose=1]
+        ignore line: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/arm-none-eabi-ar.exe qc libcmTC_6c630.a CMakeFiles/cmTC_6c630.dir/CMakeCCompilerABI.c.obj]
+        ignore line: [D:/ST/STM32CubeCLT_1.16.0/GNU-tools-for-STM32/bin/arm-none-eabi-ranlib.exe libcmTC_6c630.a]
+        ignore line: [make[1]: Leaving directory '/c/Users/OS/Desktop/Cmake_practice/CMakeFiles/CMakeScratch/TryCompile-kzuygs']
+        ignore line: []
+        ignore line: []
+        implicit libs: []
+        implicit objs: []
+        implicit dirs: []
+        implicit fwks: []
+      
+      
+...

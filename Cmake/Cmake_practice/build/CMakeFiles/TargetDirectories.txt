@@ -1,0 +1,3 @@
+C:/Users/OS/Desktop/Cmake_practice/build/CMakeFiles/STM32F103C8_Project.elf.dir
+C:/Users/OS/Desktop/Cmake_practice/build/CMakeFiles/edit_cache.dir
+C:/Users/OS/Desktop/Cmake_practice/build/CMakeFiles/rebuild_cache.dir

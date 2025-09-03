@@ -1,0 +1,3 @@
+C:/Users/OS/Desktop/Cmake/build/CMakeFiles/main.dir
+C:/Users/OS/Desktop/Cmake/build/CMakeFiles/edit_cache.dir
+C:/Users/OS/Desktop/Cmake/build/CMakeFiles/rebuild_cache.dir
