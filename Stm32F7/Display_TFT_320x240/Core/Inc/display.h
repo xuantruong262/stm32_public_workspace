@@ -153,4 +153,8 @@ void Allocate_video_buffer(uint16_t **FrA,uint16_t **FrB);
 
 void Deallocate_video_buffer(uint16_t *FrA,uint16_t *FrB);
 
+// AVI_MPJEG video
+
+uint32_t  AVI_DataOffset(FIL* f_Jpeg);
+void AVI_video_display(FIL* f_AVI)
 #endif // __SD_SPI_H__

@@ -1,0 +1,12 @@
+../Core/Src/sdio_functions.c:27:5:sd_get_space_kb	40	static
+../Core/Src/sdio_functions.c:41:5:sd_mount	16	static
+../Core/Src/sdio_functions.c:67:5:sd_unmount	16	static
+../Core/Src/sdio_functions.c:73:5:sd_write_file	4168	static
+../Core/Src/sdio_functions.c:85:5:sd_append_file	4168	static
+../Core/Src/sdio_functions.c:103:5:sd_read_file	4184	static
+../Core/Src/sdio_functions.c:138:5:sd_read_csv	4328	static
+../Core/Src/sdio_functions.c:181:5:sd_delete_file	24	static
+../Core/Src/sdio_functions.c:187:5:sd_rename_file	24	static
+../Core/Src/sdio_functions.c:193:9:sd_create_directory	24	static
+../Core/Src/sdio_functions.c:199:6:sd_list_directory_recursive	496	static
+../Core/Src/sdio_functions.c:231:6:sd_list_files	8	static

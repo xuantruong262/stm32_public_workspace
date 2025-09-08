@@ -1,10 +1,13 @@
 #include "jpeg_lcd.h"
 #include "main.h"
 
+
+
 UINT Height_Of_Jpeg = 0;
 
+
 BYTE Buff[8192] __attribute__((aligned(4))); // 8192  16384  32768   76800
-uint16_t frame_buffer[240][320] __attribute__((aligned(4)));;
+
 
 UINT STM32_in_func(JDEC* jd, BYTE* buff, UINT nd)
 {
@@ -97,3 +100,4 @@ uint32_t STM32_JPEG_DISPLAY(FIL* f_Jpeg, const char* filename)
 
     return 0;
 }
+

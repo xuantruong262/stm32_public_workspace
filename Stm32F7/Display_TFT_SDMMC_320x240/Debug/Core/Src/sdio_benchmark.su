@@ -1,0 +1,3 @@
+../Core/Src/sdio_benchmark.c:35:10:sd_benchmark_write	4696	static
+../Core/Src/sdio_benchmark.c:66:10:sd_benchmark_read	4696	static
+../Core/Src/sdio_benchmark.c:96:6:sd_benchmark	16	static

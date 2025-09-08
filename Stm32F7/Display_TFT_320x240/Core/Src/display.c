@@ -10,7 +10,8 @@ extern IWDG_HandleTypeDef hiwdg;
 #endif
 
 #define ILI9341
-
+#define aLIST 0x5453494c
+#define aMovi 0x69766f6d
 // This define for video
 #ifdef ILI9341
 #define display_w 320
@@ -27,6 +28,7 @@ extern IWDG_HandleTypeDef hiwdg;
 
 // This define for image
 #define w_per_chunk 16
+extern uint16_t frame_buffer[240][320];
 
 void SendCommand(uint8_t cmd)
 {
@@ -537,4 +539,33 @@ void Deallocate_video_buffer(uint16_t* FrA, uint16_t* FrB)
 {
     free(FrA);
     free(FrB);
+}
+
+// AVI_MPJEG video
+uint32_t  AVI_DataOffset(FIL* f_Jpeg){
+    UINT br;
+    uint32_t buf = 0;
+    uint32_t offset = 0;
+    while(br){
+        offset += br;
+        f_read(f_Jpeg, &buf, 4, &br);
+        if(buf == aLIST){
+            offset += br;
+            f_read(f_Jpeg, &buf, 4, &br);
+            offset += br;
+            f_read(f_Jpeg, &buf, 4, &br);  
+            if(buf == aMovi){
+                return offset;
+            }
+        }
+        if(br < 4){
+            break;
+        }
+    }
+    return 0x0;
+}
+
+void AVI_video_display(FIL* f_AVI){
+    uint32_t frame_offset = 0;
+    frame_offset = AVI_DataOffset(f_AVI);
 }

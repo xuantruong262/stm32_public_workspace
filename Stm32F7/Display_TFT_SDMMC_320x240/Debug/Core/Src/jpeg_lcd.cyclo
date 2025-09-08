@@ -1,0 +1,4 @@
+../Core/Src/jpeg_lcd.c:10:6:STM32_in_func	3
+../Core/Src/jpeg_lcd.c:31:6:STM32_in_func_avi	3
+../Core/Src/jpeg_lcd.c:52:6:STM32_out_func	3
+../Core/Src/jpeg_lcd.c:80:10:STM32_JPEG_DISPLAY	7
