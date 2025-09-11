@@ -172,7 +172,7 @@ int main(void)
 #ifdef VIDEO_1
     while (1)
     {
-        if (f_open(&video_f, "family_guy_rgb565_120s_be_320x240.rgb", FA_READ) == FR_OK)
+        if (f_open(&video_f, "fg565be_120s320x240.rgb", FA_READ) == FR_OK)
         {
             break;
         }
@@ -187,7 +187,7 @@ int main(void)
             f_close(&video_f);
             while (1)
             {
-                if (f_open(&video_f, "family_guy_rgb565_120s_be_320x240.rgb", FA_READ) == FR_OK)
+                if (f_open(&video_f, "fg565be_120s320x240.rgb", FA_READ) == FR_OK)
                 {
                     break;
                 }

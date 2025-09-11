@@ -23,8 +23,6 @@
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
-extern DMA_HandleTypeDef hdma_spi2_rx;
-
 extern DMA_HandleTypeDef hdma_spi2_tx;
 
 /* Private typedef -----------------------------------------------------------*/
@@ -77,6 +75,51 @@ void HAL_MspInit(void)
   /* USER CODE BEGIN MspInit 1 */
 
   /* USER CODE END MspInit 1 */
+}
+
+/**
+  * @brief DMA2D MSP Initialization
+  * This function configures the hardware resources used in this example
+  * @param hdma2d: DMA2D handle pointer
+  * @retval None
+  */
+void HAL_DMA2D_MspInit(DMA2D_HandleTypeDef* hdma2d)
+{
+  if(hdma2d->Instance==DMA2D)
+  {
+    /* USER CODE BEGIN DMA2D_MspInit 0 */
+
+    /* USER CODE END DMA2D_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_DMA2D_CLK_ENABLE();
+    /* USER CODE BEGIN DMA2D_MspInit 1 */
+
+    /* USER CODE END DMA2D_MspInit 1 */
+
+  }
+
+}
+
+/**
+  * @brief DMA2D MSP De-Initialization
+  * This function freeze the hardware resources used in this example
+  * @param hdma2d: DMA2D handle pointer
+  * @retval None
+  */
+void HAL_DMA2D_MspDeInit(DMA2D_HandleTypeDef* hdma2d)
+{
+  if(hdma2d->Instance==DMA2D)
+  {
+    /* USER CODE BEGIN DMA2D_MspDeInit 0 */
+
+    /* USER CODE END DMA2D_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_DMA2D_CLK_DISABLE();
+    /* USER CODE BEGIN DMA2D_MspDeInit 1 */
+
+    /* USER CODE END DMA2D_MspDeInit 1 */
+  }
+
 }
 
 /**
@@ -231,24 +274,6 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     HAL_GPIO_Init(TFT_SCK_GPIO_Port, &GPIO_InitStruct);
 
     /* SPI2 DMA Init */
-    /* SPI2_RX Init */
-    hdma_spi2_rx.Instance = DMA1_Stream2;
-    hdma_spi2_rx.Init.Request = DMA_REQUEST_SPI2_RX;
-    hdma_spi2_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-    hdma_spi2_rx.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma_spi2_rx.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_spi2_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    hdma_spi2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_spi2_rx.Init.Mode = DMA_NORMAL;
-    hdma_spi2_rx.Init.Priority = DMA_PRIORITY_LOW;
-    hdma_spi2_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
-    if (HAL_DMA_Init(&hdma_spi2_rx) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    __HAL_LINKDMA(hspi,hdmarx,hdma_spi2_rx);
-
     /* SPI2_TX Init */
     hdma_spi2_tx.Instance = DMA1_Stream3;
     hdma_spi2_tx.Init.Request = DMA_REQUEST_SPI2_TX;
@@ -304,7 +329,6 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
     HAL_GPIO_DeInit(TFT_SCK_GPIO_Port, TFT_SCK_Pin);
 
     /* SPI2 DMA DeInit */
-    HAL_DMA_DeInit(hspi->hdmarx);
     HAL_DMA_DeInit(hspi->hdmatx);
 
     /* SPI2 interrupt DeInit */

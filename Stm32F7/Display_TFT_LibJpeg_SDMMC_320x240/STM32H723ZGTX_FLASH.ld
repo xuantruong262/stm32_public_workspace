@@ -54,6 +54,53 @@ MEMORY
 /* Define output sections */
 SECTIONS
 {
+/* User deifine start */
+	  .RAM_D1 (NOLOAD) :
+	  {
+	    . = ALIGN(4);
+	    *(.RAM_D1)
+	    *(.RAM_D1.*)
+	    . = ALIGN(4);
+	  } >RAM_D1
+	
+	  .RAM_D2 (NOLOAD) :
+	  {
+	    . = ALIGN(4);
+	    *(.RAM_D2)
+	    *(.RAM_D2.*)
+	    . = ALIGN(4);
+	  } >RAM_D2
+	
+	  .RAM_D3 (NOLOAD) :
+	  {
+	    . = ALIGN(4);
+	    *(.RAM_D3)
+	    *(.RAM_D3.*)
+	    . = ALIGN(4);
+	  } >RAM_D3
+	
+	.itcm_code :
+	{
+	  . = ALIGN(4);
+	  _sitcm_code = .;              /* ITCM load start */
+	  *(.itcm_code)                 /* các hàm nằm ở đây */
+	  . = ALIGN(4);
+	  _eitcm_code = .;              /* ITCM load end */
+	} >ITCMRAM AT>FLASH
+	
+	/* địa chỉ trong FLASH nơi code gốc được lưu */
+	_sitcm_code_load = LOADADDR(.itcm_code);
+	
+	.DTCMRAM(NOLOAD) :
+	{
+	  . = ALIGN(4);
+	  *(.RAM_D2)
+	  *(.RAM_D2.*)
+	  . = ALIGN(4);
+	} >DTCMRAM	
+
+/* User deifine end */
+    
   /* The startup code goes first into FLASH */
   .isr_vector :
   {

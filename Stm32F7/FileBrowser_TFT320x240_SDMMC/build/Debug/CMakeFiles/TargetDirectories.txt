@@ -1,0 +1,8 @@
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/build/Debug/CMakeFiles/FileBrowser_TFT320x240_SDMMC.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/build/Debug/CMakeFiles/edit_cache.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/build/Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/build/Debug/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/build/Debug/cmake/stm32cubemx/CMakeFiles/LibJPEG.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/build/Debug/cmake/stm32cubemx/CMakeFiles/FatFs.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/build/Debug/cmake/stm32cubemx/CMakeFiles/edit_cache.dir
+C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/build/Debug/cmake/stm32cubemx/CMakeFiles/rebuild_cache.dir

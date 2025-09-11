@@ -25,6 +25,8 @@ SUBDIRS := \
 Core/Src \
 Core/Startup \
 Core/TJpgDec \
+Core/display \
+Core/sdio \
 Drivers/STM32H7xx_HAL_Driver/Src \
 FATFS/App \
 FATFS/Target \

@@ -23,9 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <setjmp.h>
 #include "display.h"
-#include "jpeg_lcd.h"
-#include "sdio_benchmark.h"
 #include "sdio_functions.h"
 /* USER CODE END Includes */
 
@@ -46,36 +45,22 @@
 
 /* Private variables ---------------------------------------------------------*/
 
+DMA2D_HandleTypeDef hdma2d;
+
 SD_HandleTypeDef hsd1;
 
 SPI_HandleTypeDef hspi2;
-DMA_HandleTypeDef hdma_spi2_rx;
 DMA_HandleTypeDef hdma_spi2_tx;
 
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-uint16_t frame_buffer[240][320] __attribute__((aligned(4)));
+uint8_t IsPlayingContent = 0;
+extern uint16_t frame_buffer[240][320];
 
 extern int dma_tx_done_spi2;
 extern int dma_rx_done_spi2;
-void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef* hspi)
-{
-    if (hspi == &hspi2)
-    { // For TFT display
-        dma_tx_done_spi2 = 1;
-        HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
-    }
-}
 
-void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef* hspi)
-{
-    if (hspi == &hspi2) // For TFT display
-    {
-        dma_rx_done_spi2 = 1;
-        HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
-    }
-}
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,20 +72,120 @@ static void MX_DMA_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_SDMMC1_SD_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_DMA2D_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+///////HARDWARE LIBJPEG
+struct my_error_mgr {
+	struct jpeg_error_mgr pub; /* "public" fields */
 
-int _write(int fd, unsigned char* buf, int len)
-{
-    if (fd == 1 || fd == 2)
-    {                                              // stdout or stderr ?
-        HAL_UART_Transmit(&huart1, buf, len, 999); // Print to the UART
-    }
-    return len;
+	jmp_buf setjmp_buffer; /* for return to caller */
+};
+
+typedef struct my_error_mgr *my_error_ptr;
+
+/*
+ * Here's the routine that will replace the standard error_exit method:
+ */
+
+METHODDEF(void) my_error_exit(j_common_ptr cinfo) {
+	/* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
+	my_error_ptr myerr = (my_error_ptr) cinfo->err;
+
+	/* Always display the message. */
+	/* We could postpone this until after returning, if we chose. */
+	(*cinfo->err->output_message)(cinfo);
+
+	/* Return control to the setjmp point */
+	longjmp(myerr->setjmp_buffer, 1);
+}
+
+GLOBAL(int) read_JPEG_file(char *filename) {
+	struct jpeg_decompress_struct cinfo;
+	struct my_error_mgr jerr;
+	/* More stuff */
+	FIL infile; /* source file */
+	JSAMPARRAY buffer; /* Output row buffer */
+	int row_stride; /* physical row width in output buffer */
+
+	if ((f_open(&infile, filename, FA_READ)) != FR_OK) {
+		//fprintf(stderr, "can't open %s\n", filename);
+		return 0;
+	}
+
+	/* Step 1: allocate and initialize JPEG decompression object */
+
+	cinfo.err = jpeg_std_error(&jerr.pub);
+	jerr.pub.error_exit = my_error_exit;
+
+	if (setjmp(jerr.setjmp_buffer)) {
+
+		jpeg_destroy_decompress(&cinfo);
+		f_close(&infile);
+		return 0;
+	}
+
+	jpeg_create_decompress(&cinfo);
+
+	/* Step 2: specify data source (eg, a file) */
+
+	jpeg_stdio_src(&cinfo, &infile);
+
+	/* Step 3: read file parameters with jpeg_read_header() */
+
+	(void) jpeg_read_header(&cinfo, TRUE);
+
+	/* Step 4: set parameters for decompression */
+	/* Step 5: Start decompressor */
+
+	(void) jpeg_start_decompress(&cinfo);
+
+	row_stride = cinfo.output_width * cinfo.output_components;
+
+	buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr) &cinfo, JPOOL_IMAGE,
+			row_stride, 1);
+
+	/* Step 6: while (scan lines remain to be read) */
+	/*           jpeg_read_scanlines(...); */
+	uint16_t line = 0;
+	HAL_StatusTypeDef status;
+	while (cinfo.output_scanline < cinfo.output_height) {
+
+		(void) jpeg_read_scanlines(&cinfo, buffer, 1);
+		//put_scanline_someplace(buffer[0], row_stride);
+		HAL_DMA2D_Start(&hdma2d, (uint32_t) buffer[0], frame_buffer[line], 320, 1);
+		for (int i = 0; i < 320; i++) {
+			frame_buffer[line][i]   =  __REV16(frame_buffer[line][i]);
+		}
+
+		HAL_DMA2D_PollForTransfer(&hdma2d, HAL_MAX_DELAY);
+
+		line++;
+	}
+
+	/* Step 7: Finish decompression */
+
+	(void) jpeg_finish_decompress(&cinfo);
+
+	/* Step 8: Release JPEG decompression object */
+
+	jpeg_destroy_decompress(&cinfo);
+
+	f_close(&infile);
+
+	return 1;
+}
+
+////////////////////////////////////
+int _write(int fd, unsigned char *buf, int len) {
+	if (fd == 1 || fd == 2) {                              // stdout or stderr ?
+		HAL_UART_Transmit(&huart1, buf, len, 999); // Print to the UART
+	}
+	return len;
 }
 uint32_t FPS = 0;
 /* USER CODE END 0 */
@@ -113,10 +198,11 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-    FIL video_f;
-    UINT br;
-    uint32_t frame_num = 0;
-
+	FIL video_f;
+	UINT br;
+	uint32_t frame_num = 0;
+	//for(int i = 0; i < 240 ; i++){
+	//}
   /* USER CODE END 1 */
 
   /* MPU Configuration--------------------------------------------------------*/
@@ -149,56 +235,51 @@ int main(void)
   MX_LIBJPEG_Init();
   MX_SDMMC1_SD_Init();
   MX_USART1_UART_Init();
+  MX_DMA2D_Init();
   /* USER CODE BEGIN 2 */
-    LCD_Init(1);
-    TFT_AdjustGamma();
-    FillScreen(0xf800, 320, 240);
-    HAL_Delay(3000);
-    //    sd_benchmark();
-    uint32_t start_time = 0;
-    uint32_t end_time = 0;
-    uint32_t period = 0;
-    char file_name[100];
-    while (1)
-    {
-        if (sd_mount() == FR_OK)
-        {
-            break;
-        }
-    }
+	LCD_Init(&hspi2, &IsPlayingContent, 1);
+	LCD_AdjustGamma();
+	LCD_FillScreen(0x0000, 320, 240);
+	HAL_Delay(3000);
+	//    sd_benchmark();
+	uint32_t start_time = 0;
+	uint32_t end_time = 0;
+	uint32_t period = 0;
+	char file_name[100];
+	while (1) {
+		if (sd_mount() == FR_OK) {
+			break;
+		}
+	}
 
-#define VIDEO_1
+#define JPEG
 
 #ifdef VIDEO_1
-    while (1)
-    {
-        if (f_open(&video_f, "family_guy_rgb565_120s_be_320x240.rgb", FA_READ) == FR_OK)
-        {
-            break;
-        }
-    }
-    while (1)
-    {
-        start_time = HAL_GetTick();
-        if (!play_video(&video_f, &frame_num))
-        {
-            HAL_Delay(2000);
-            FillScreen(0xf800, 320, 240);
-            f_close(&video_f);
-            while (1)
-            {
-                if (f_open(&video_f, "family_guy_rgb565_120s_be_320x240.rgb", FA_READ) == FR_OK)
-                {
-                    break;
-                }
-            }
-            frame_num = 0;
-            // break;
-        }
-        end_time = HAL_GetTick();
-        period = end_time - start_time;
-        FPS = 1000 / period;
-    }
+	while (1) {
+		if (f_open(&video_f, "family_guy_rgb565_120s_be_320x240.rgb", FA_READ)
+				== FR_OK) {
+			break;
+		}
+	}
+	while (1) {
+		start_time = HAL_GetTick();
+		if (!Raw_play_video(&video_f, &frame_num)) {
+			HAL_Delay(2000);
+			FillScreen(0xf800, 320, 240);
+			f_close(&video_f);
+			while (1) {
+				if (f_open(&video_f, "family_guy_rgb565_120s_be_320x240.rgb",
+						FA_READ) == FR_OK) {
+					break;
+				}
+			}
+			frame_num = 0;
+			// break;
+		}
+		end_time = HAL_GetTick();
+		period = end_time - start_time;
+		FPS = 1000 / period;
+	}
 #endif
 
 #ifdef VIDEO_2
@@ -225,32 +306,50 @@ int main(void)
 #endif
 
 #ifdef JPEG
-    uint8_t image_id = 1;
+
+	uint8_t image_id = 1;
+	sprintf(file_name, "image%d_320x240.jpg", image_id);
+
 #endif
-    sd_unmount();
+//	sd_unmount();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-    while (1)
-    {
-//    	printf("hello\n");
-//    	HAL_Delay(2000);
+	while (1) {
 #ifdef JPEG
-        sprintf(file_name, "image%d_320x240.jpg", image_id);
-        STM32_JPEG_DISPLAY(&video_f, file_name);
-        HAL_Delay(3000);
+		sprintf(file_name, "image%d_320x240.jpg", image_id);
+//		start_time = HAL_GetTick();
+		// Software decompress
+        LCD_DisplayJPEG(file_name);
+//		end_time = HAL_GetTick();
+//		period = end_time - start_time;
+//		printf("Software JPG decode: %d, \n", period);
+//		start_time = 0;
+//		end_time = 0;
+//		period = 0;
+//        // Hardware decompress
+//		start_time = HAL_GetTick();
+//    	read_JPEG_file(file_name);
+//    	LCD_DrawPixData(0, 0, 320, 240, &frame_buffer[0][0]);
+//		end_time = HAL_GetTick();
+//		period = end_time - start_time;
+//		printf("Hardware JPG decode: %d\n", period);
+
         image_id++;
         if (image_id == 11)
         {
             image_id = 1;
         }
+		start_time = 0;
+		end_time = 0;
+		period = 0;
+        HAL_Delay(3000);
 #endif
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    }
+	}
   /* USER CODE END 3 */
 }
 
@@ -329,6 +428,46 @@ void PeriphCommonClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief DMA2D Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_DMA2D_Init(void)
+{
+
+  /* USER CODE BEGIN DMA2D_Init 0 */
+
+  /* USER CODE END DMA2D_Init 0 */
+
+  /* USER CODE BEGIN DMA2D_Init 1 */
+
+  /* USER CODE END DMA2D_Init 1 */
+  hdma2d.Instance = DMA2D;
+  hdma2d.Init.Mode = DMA2D_M2M_PFC;
+  hdma2d.Init.ColorMode = DMA2D_OUTPUT_RGB565;
+  hdma2d.Init.OutputOffset = 0;
+  hdma2d.LayerCfg[1].InputOffset = 0;
+  hdma2d.LayerCfg[1].InputColorMode = DMA2D_INPUT_RGB888;
+  hdma2d.LayerCfg[1].AlphaMode = DMA2D_NO_MODIF_ALPHA;
+  hdma2d.LayerCfg[1].InputAlpha = 0;
+  hdma2d.LayerCfg[1].AlphaInverted = DMA2D_REGULAR_ALPHA;
+  hdma2d.LayerCfg[1].RedBlueSwap = DMA2D_RB_REGULAR;
+  hdma2d.LayerCfg[1].ChromaSubSampling = DMA2D_NO_CSS;
+  if (HAL_DMA2D_Init(&hdma2d) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_DMA2D_ConfigLayer(&hdma2d, 1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN DMA2D_Init 2 */
+
+  /* USER CODE END DMA2D_Init 2 */
+
 }
 
 /**
@@ -468,9 +607,6 @@ static void MX_DMA_Init(void)
   __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
-  /* DMA1_Stream2_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
   /* DMA1_Stream3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
@@ -573,11 +709,10 @@ void MPU_Config(void)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-    /* User can add his own implementation to report the HAL error return state */
-    __disable_irq();
-    while (1)
-    {
-    }
+	/* User can add his own implementation to report the HAL error return state */
+	__disable_irq();
+	while (1) {
+	}
   /* USER CODE END Error_Handler_Debug */
 }
 #ifdef USE_FULL_ASSERT

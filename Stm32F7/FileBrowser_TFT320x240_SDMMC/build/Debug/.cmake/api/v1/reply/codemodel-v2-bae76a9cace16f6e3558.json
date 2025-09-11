@@ -1,0 +1,106 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.22"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "cmake/stm32cubemx",
+					"jsonFile" : "directory-cmake.stm32cubemx-Debug-a874d3cc84b5982fda2e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.22"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "cmake/stm32cubemx",
+					"targetIndexes" : 
+					[
+						0,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "FileBrowser_TFT320x240_SDMMC",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "FatFs::@768a070a0fe75716b479",
+					"jsonFile" : "target-FatFs-Debug-6f4118770fc697b07099.json",
+					"name" : "FatFs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "FileBrowser_TFT320x240_SDMMC::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-FileBrowser_TFT320x240_SDMMC-Debug-6870ffcc5a155ef09945.json",
+					"name" : "FileBrowser_TFT320x240_SDMMC",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "LibJPEG::@768a070a0fe75716b479",
+					"jsonFile" : "target-LibJPEG-Debug-d43a6308a1bf9faab2fc.json",
+					"name" : "LibJPEG",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "STM32_Drivers::@768a070a0fe75716b479",
+					"jsonFile" : "target-STM32_Drivers-Debug-57ca87ca1cbf17867ca4.json",
+					"name" : "STM32_Drivers",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/build/Debug",
+		"source" : "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
