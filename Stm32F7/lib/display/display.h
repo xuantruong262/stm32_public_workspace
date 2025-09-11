@@ -22,7 +22,20 @@
 #include <string.h>
 #include "main.h"
 #include "fatfs.h"
-#include "sdio_functions.h"
+#include "fonts.h"
+// ST7735
+// ILI9341
+#define ILI9341
+#define SDBrower_ptr_color 0xe682
+// This define for type of TFT display
+#ifdef ILI9341
+#define display_w 320
+#define display_h 240
+#elif ST7735
+#define display_w 160
+#define display_h 128
+#endif
+
 
 #define ILI9341_NOP     0x00
 #define ILI9341_SWRESET 0x01
@@ -111,6 +124,40 @@
 #else
   #define TFT_MAD_COLOR_ORDER TFT_MAD_BGR
 #endif
+
+#define IR_None 0x0
+#define IR_CH_Minus 0x00FFA25D
+#define IR_CH 0x00FF629D
+#define IR_CH_Plus  0x00FFE21D
+#define IR_Prev 0x00FF22DD
+#define IR_Next 0x00FF02FD
+#define IR_Play_Pause 0x00FFC23D
+#define IR_Minus 0x00FFE01F
+#define IR_Plus 0x00FFA857
+#define IR_EQ 0x00FF906F
+#define IR_0  0x00FF6897
+#define IR_100_Plus 0x00FF9867
+#define IR_200_Plus 0x00FFB04F
+#define IR_1  0x00FF30CF
+#define IR_2  0x00FF18E7
+#define IR_3  0x00FF7A85
+#define IR_4  0x00FF10EF
+#define IR_5  0x00FF38C7
+#define IR_6  0x00FF5AA5
+#define IR_7  0x00FF42BD
+#define IR_8  0x00FF4AB5
+#define IR_9  0x00FF52AD
+
+#define aLIST 0x5453494c
+#define aMovi 0x69766f6d
+#define aJunk 0x4b4e554a
+// For RAW video display
+#define w_numchunk_in_frame 4
+#define byte_per_pix 2
+#define line_per_chunk display_h / w_numchunk_in_frame
+#define total_pix_per_chunk line_per_chunk* display_w
+// For image display
+#define w_per_chunk 32
 typedef struct obj_status
 {
   uint32_t pos_x;
@@ -127,35 +174,56 @@ typedef struct bmp_info
   uint16_t bpp; // byte per pixel
 } bmp_info;
 
+typedef enum Browser_FileFormat
+{
+    emJPG,
+    emBMP,
+    emWAV,
+    emRGB,
+    emDAT,
+    emNone
+} Browser_FileFormat;
+
+typedef struct Browser_FileInfo
+{
+    char name[50];
+    Browser_FileFormat format;
+    uint32_t size;
+} Browser_FileInfo;
 
 
+// function prototypes
 void SendCommand(uint8_t cmd);
 
 void SendData(uint8_t *data, uint16_t size);
 
 void Reset(void);
 
-void LCD_Init(uint8_t Is160x128);
+void LCD_Init(SPI_HandleTypeDef *hspi_ptr ,uint8_t *LCD_Playing_Ctrl, uint8_t IsHorizol);
 
-void FillScreen(uint16_t color,uint16_t end_x,uint16_t end_y );
+void LCD_FillScreen(uint16_t color,uint16_t end_x,uint16_t end_y );
 
-void TFT_AdjustGamma(void);
+void LCD_AdjustGamma(void);
 
-void Draw_ChunkOfColor(uint8_t pos_x, uint8_t pos_y, uint8_t width, uint8_t height, uint16_t color);
+void Draw_ChunkOfColor(uint16_t pos_x, uint16_t pos_y, uint16_t width, uint16_t height, uint16_t color);
 
-void extract_BMP_Info(uint8_t *Frame_header_Buffer, bmp_info *bmp);
+// Image display
+uint8_t LCD_DisplayBMP(const char * file_name);
+uint32_t LCD_DisplayJPEG(const char* filename);
 
-uint8_t Display_BMP_picture(const char * file_name);
-
-void video_display(obj_status obj, uint16_t *buf);
-
-uint8_t Raw_play_video(FIL *f, uint32_t *frame_num);
-
-void Allocate_video_buffer(uint16_t **FrA,uint16_t **FrB);
-
-void Deallocate_video_buffer(uint16_t *FrA,uint16_t *FrB);
-
+// Text display
+void LCD_WriteChar(uint16_t x, uint16_t y, char ch, FontDef font, uint16_t color, uint16_t bgcolor);
+void LCD_WriteString(uint16_t x, uint16_t y, const char* str, FontDef font, uint16_t color, uint16_t bgcolor);
 // AVI_MPJEG video
-uint32_t  AVI_DataOffset(FIL* f_Jpeg);
-uint8_t AVI_video_display(FIL* f_AVI);
+uint8_t LCD_PlayAVIVideo(FIL* f_AVI);
+uint8_t LCD_PlayRawVideo(const char *file_name ,uint32_t *frame_num);
+
+// SD file browser
+void Browser_Init(Browser_FileInfo *FileList);
+void Browser_MenuBackGround();
+void Browser_FillCtrlPtr(uint8_t row, uint16_t color);
+void Browser_WriteFile2Menu(uint8_t N_o, const char *str);
+void Browser_Page_Update(uint8_t ptr_location);
+void Browser_FileCtrl(uint32_t button_code, uint8_t Sel_N_o);
+
 #endif // __SD_SPI_H__

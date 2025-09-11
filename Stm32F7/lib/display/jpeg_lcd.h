@@ -33,8 +33,6 @@ static int Mask_Bottom= TFTLCD_HEIGHT - 1;  //TFTLCD���·��Ľ���
 UINT      STM32_in_func ( JDEC* jd,BYTE* buff,UINT nd) ;
 UINT      STM32_out_func (JDEC* jd,void* bitmap,JRECT* rect); 
 void      STM32_Display( int left,int right,int top,int bottom,const uint16_t * RGB_Data_Pointer);
-UINT STM32_in_func_avi(JDEC** jd, BYTE* buff, UINT nd);
-uint32_t  STM32_JPEG_DISPLAY(FIL* f_Jpeg,const char* filename);
 
 
 /********************  COPYRIGHT (C) 2013 Creator Lab of embedded systems *******************************/

@@ -19,6 +19,23 @@
 #include "fatfs.h"
 #include <stdint.h>
 
+//Sd file browser
+typedef enum eSDFileFormat
+{
+    emSdJPG,
+    emSdBMP,
+    emSdWAV,
+    emSdRGB,
+    emSdDAT,
+    emSdNone
+} eSDFileFormat;
+
+typedef struct SDFile_Info
+{
+    char name[50];
+    eSDFileFormat format;
+    uint32_t size;
+} SDFile_Info;
 
 // Mount and unmount
 int sd_mount(void);
@@ -35,7 +52,7 @@ int sd_rename_file(const char *oldname, const char *newname);
 // Directory handling
 FRESULT sd_create_directory(const char *path);
 void sd_list_directory_recursive(const char *path, int depth);
-void sd_list_files(void);
+void sd_list_files(SDFile_Info *FileList);
 
 // Space information
 int sd_get_space_kb(void);

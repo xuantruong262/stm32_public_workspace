@@ -15,10 +15,11 @@ static uint32_t sampleRate = 44100;
 static uint32_t dataChunkSize = 0;
 
 // double buffer
-static uint8_t buffer[WAV_BUF_SIZE * 2] __attribute__((section(".MY_RAM_D3"))); // Use this for I2S6(BDMA)
+__attribute__((section(".RAM_D3"), aligned(4)))
+static uint8_t buffer[WAV_BUF_SIZE * 2]; // Use this for I2S6(BDMA)
 
 static volatile uint32_t bufFillPos = 0;
-static volatile uint8_t playRunning = 0;
+static volatile uint8_t *playRunning = 0;
 
 // file read position
 static uint32_t bytesRemaining = 0;
@@ -33,7 +34,7 @@ void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s);
 void HAL_I2S_ErrorCallback(I2S_HandleTypeDef *hi2s);
 
 /* Initialize WAV player: mount FS, open file, parse header */
-WAV_Status wav_init(I2S_HandleTypeDef *hi2s_ptr, char *filename)
+WAV_Status wav_init(I2S_HandleTypeDef *hi2s_ptr, char *filename, uint8_t *Audio_Playing_Ctrl)
 {
     hI2S = hi2s_ptr;
 
@@ -48,7 +49,7 @@ WAV_Status wav_init(I2S_HandleTypeDef *hi2s_ptr, char *filename)
     bytesRemaining = dataChunkSize;
     memset(buffer, 0, sizeof(buffer));
     bufFillPos = 0;
-    playRunning = 0;
+    playRunning = Audio_Playing_Ctrl;
 
     return WAV_OK;
 }
@@ -69,7 +70,7 @@ void wav_start_play(void)
         memset(buffer + br, 0, WAV_BUF_SIZE*2 - br);
     }
 
-    playRunning = 1;
+    *playRunning = 1;
 
     // Start DMA transmit (blocking start with DMA offload)
     // Note: HAL_I2S_Transmit_DMA expects a buffer of 16-bit samples for 16-bit PCM.
@@ -79,11 +80,11 @@ void wav_start_play(void)
 /* stop playback */
 void wav_stop_play(void)
 {
-    if(!playRunning) return;
+    if(!(*playRunning)) return;
     HAL_I2S_DMAStop(hI2S);
     f_close(&fil);
-    f_mount(NULL, "", 1);
-    playRunning = 0;
+    //f_mount(NULL, "", 1);
+    *playRunning = 0;
 }
 
 /* deinit if needed */
@@ -146,7 +147,7 @@ static void start_dma_transfer(uint8_t *pData, uint32_t length)
 /* Half complete: refill first half */
 void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
 {
-    if (!playRunning) return;
+    if (!(*playRunning)) return;
     // fill first half of buffer
     UINT br;
     uint8_t *dst = buffer;
@@ -162,6 +163,7 @@ void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
     } else {
         // no more data: fill zeros and stop after whole buffer has played
         memset(dst, 0, WAV_BUF_SIZE);
+        wav_deinit();
         // optional: signal end-of-playback flag here
     }
 }
@@ -169,7 +171,7 @@ void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
 /* Transfer complete: refill second half */
 void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
 {
-    if (!playRunning) return;
+    if (!(*playRunning)) return;
     UINT br;
     uint8_t *dst = buffer + WAV_BUF_SIZE;
     uint32_t toRead = (WAV_BUF_SIZE < bytesRemaining) ? WAV_BUF_SIZE : bytesRemaining;
@@ -182,6 +184,7 @@ void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
         }
     } else {
         memset(dst, 0, WAV_BUF_SIZE);
+        wav_deinit();
     }
 
     // if bytesRemaining==0 and both halves zero -> stop
