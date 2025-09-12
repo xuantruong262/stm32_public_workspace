@@ -25,7 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "display.h"
 //#include "jpeg_lcd.h"
-//#include "sdio_benchmark.h"
+#include "sdio_benchmark.h"
 #include "sdio_functions.h"
 #include "wav_player.h"
 /* USER CODE END Includes */
@@ -67,12 +67,10 @@ uint8_t FileSelection = 0;
 SDFile_Info SDCard_FileList[50];
 
 //For image display
-extern int dma_tx_done_spi2;
-extern int dma_rx_done_spi2;
-Browser_FileFormat fileFormat = emNone;
+volatile Browser_FileFormat fileFormat = emNone;
 UINT br;
 uint8_t image_id = 0;
-uint8_t IsPlayingContent = 0;
+volatile uint8_t IsPlayingContent = 0;
 
 //For IR Remote control
 uint32_t tempCode;
@@ -93,8 +91,8 @@ static void MX_BDMA_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_I2S6_Init(void);
-static void MX_SDMMC1_SD_Init(void);
 static void MX_TIM4_Init(void);
+static void MX_SDMMC1_SD_Init(void);
 /* USER CODE BEGIN PFP */
 static void IR_Control(uint32_t Ir_code);
 /* USER CODE END PFP */
@@ -108,8 +106,6 @@ int _write(int fd, unsigned char *buf, int len) {
 	}
 	return len;
 }
-
-
 
 // GPIO EXTI callbacks
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
@@ -141,7 +137,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 }
 // UART callbacks
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
-
 	memset(firmware_data, 0, 1024);
 	HAL_UARTEx_ReceiveToIdle_IT(&huart1, firmware_data, 1024);
 }
@@ -191,8 +186,8 @@ int main(void)
   MX_LIBJPEG_Init();
   MX_USART1_UART_Init();
   MX_I2S6_Init();
-  MX_SDMMC1_SD_Init();
   MX_TIM4_Init();
+  MX_SDMMC1_SD_Init();
   /* USER CODE BEGIN 2 */
 	// System peripheral
 	HAL_TIM_Base_Start(&htim4);
@@ -209,9 +204,12 @@ int main(void)
 			break;
 		}
 	}
+	HAL_Delay(2000);
+//	sd_benchmark();
 	sd_list_files(SDCard_FileList);
-	// For File browser
+//	 For File browser
 	Browser_Init((Browser_FileInfo*) SDCard_FileList);
+	fileFormat = emNone;
 
   /* USER CODE END 2 */
 
@@ -230,14 +228,16 @@ int main(void)
 			IsPlayingContent = 0;
 		} else if (fileFormat == emWAV) {
 			IsPlayingContent = 1;
-			if (wav_init(&hi2s6, SDCard_FileList[FileSelection].name, &IsPlayingContent) == WAV_OK) {
+			if (wav_init(&hi2s6, SDCard_FileList[FileSelection].name,
+					&IsPlayingContent) == WAV_OK) {
 				wav_start_play();
 			}
 			fileFormat = emNone;
 		} else if (fileFormat == emRGB) {
 			IsPlayingContent = 1;
 			uint32_t frame_num = 0;
-			while (LCD_PlayRawVideo(SDCard_FileList[FileSelection].name, &frame_num)) ;
+			while (LCD_PlayRawVideo(SDCard_FileList[FileSelection].name, &frame_num))
+				;
 			fileFormat = emNone;
 			Browser_FileCtrl(IR_EQ, FileSelection);
 			IsPlayingContent = 0;
@@ -245,7 +245,8 @@ int main(void)
 			IsPlayingContent = 1;
 			uint32_t frame_num = 0;
 			if (f_open(&video_f, SDCard_FileList[FileSelection].name, FA_READ) == FR_OK) {
-				while (LCD_PlayAVIVideo(&video_f)) ;
+				while (LCD_PlayAVIVideo(&video_f))
+					;
 				f_close(&video_f);
 			}
 			fileFormat = emNone;
@@ -253,7 +254,7 @@ int main(void)
 			IsPlayingContent = 0;
 		}
 		//printf("Fileformat: %d\n",fileFormat);
-		HAL_Delay(1000);
+		HAL_Delay(2000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -289,13 +290,13 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 13;
+  RCC_OscInitStruct.PLL.PLLN = 14;
   RCC_OscInitStruct.PLL.PLLP = 1;
-  RCC_OscInitStruct.PLL.PLLQ = 6;
+  RCC_OscInitStruct.PLL.PLLQ = 5;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
-  RCC_OscInitStruct.PLL.PLLFRACN = 4096;
+  RCC_OscInitStruct.PLL.PLLFRACN = 512;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -393,8 +394,9 @@ static void MX_SDMMC1_SD_Init(void)
   hsd1.Init.ClockEdge = SDMMC_CLOCK_EDGE_RISING;
   hsd1.Init.ClockPowerSave = SDMMC_CLOCK_POWER_SAVE_DISABLE;
   hsd1.Init.BusWide = SDMMC_BUS_WIDE_4B;
-  hsd1.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
-  hsd1.Init.ClockDiv = 3;
+  hsd1.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_ENABLE;
+  hsd1.Init.ClockDiv = 0;
+  hsd1.Init.TranceiverPresent = SDMMC_TRANSCEIVER_PRESENT;
   if (HAL_SD_Init(&hsd1) != HAL_OK)
   {
     Error_Handler();

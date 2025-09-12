@@ -2,7 +2,7 @@
 #include "main.h"
 
 UINT Height_Of_Jpeg = 0;
-
+#define ALIGN32(x)   (((x) + 31) & ~31U)
 //Store the frame buffer
 #ifdef STM32H723xx_H
 extern uint16_t frame_buffer[240][320];
@@ -15,9 +15,10 @@ UINT STM32_in_func(JDEC* jd, BYTE* buff, UINT nd)
 
     if (buff)
     {
-
         if (f_read(dev, buff, nd, &rb) == FR_OK) {
-        	//SCB_InvalidateDCache_by_Addr((uint32_t*)buff, nd);
+#ifdef USING_CACHE
+        	SCB_InvalidateDCache_by_Addr((uint32_t*)buff, ALIGN32(nd));
+#endif
         }
         return rb;
     }
@@ -34,7 +35,6 @@ UINT STM32_out_func(
     jd = jd;
     uint16_t w = rect->right - rect->left + 1;
     uint16_t h = rect->bottom - rect->top + 1;
-#ifdef STM32H723xx_HH
     uint8_t* src = (uint8_t*) bitmap;
     int j = 0;
 
@@ -58,8 +58,10 @@ UINT STM32_out_func(
         j++;
     }
 #endif
-#else
+
+#ifndef REALSE_FULL_SCREEN
     LCD_DrawPixData(rect->left,rect->top,w, h,(uint16_t *)bitmap);
 #endif
+
     return 0;
 }

@@ -23,6 +23,7 @@
 #include "main.h"
 #include "fatfs.h"
 #include "fonts.h"
+#include "core_cm7.h"
 // ST7735
 // ILI9341
 #define ILI9341
@@ -158,6 +159,7 @@
 #define total_pix_per_chunk line_per_chunk* display_w
 // For image display
 #define w_per_chunk 32
+#define USING_CACHE
 typedef struct obj_status
 {
   uint32_t pos_x;
@@ -211,7 +213,7 @@ void Draw_ChunkOfColor(uint16_t pos_x, uint16_t pos_y, uint16_t width, uint16_t 
 // Image display
 uint8_t LCD_DisplayBMP(const char * file_name);
 uint32_t LCD_DisplayJPEG(const char* filename);
-
+void LCD_DrawPixData(uint16_t pos_x, uint16_t pos_y, uint16_t width, uint16_t height, uint16_t *data_frame);
 // Text display
 void LCD_WriteChar(uint16_t x, uint16_t y, char ch, FontDef font, uint16_t color, uint16_t bgcolor);
 void LCD_WriteString(uint16_t x, uint16_t y, const char* str, FontDef font, uint16_t color, uint16_t bgcolor);

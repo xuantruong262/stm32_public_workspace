@@ -78,17 +78,8 @@ SECTIONS
 	    *(.RAM_D3.*)
 	    . = ALIGN(4);
 	  } >RAM_D3
-	.itcm_code :
-	{
-	  . = ALIGN(4);
-	  _sitcm_code = .;              /* ITCM load start */
-	  *(.itcm_code)                 /* các hàm nằm ở đây */
-	  . = ALIGN(4);
-	  _eitcm_code = .;              /* ITCM load end */
-	} >ITCMRAM AT>FLASH
+
 	
-	/* địa chỉ trong FLASH nơi code gốc được lưu */
-	_sitcm_code_load = LOADADDR(.itcm_code);	
 	.DTCMRAM(NOLOAD) :
 	{
 	  . = ALIGN(4);

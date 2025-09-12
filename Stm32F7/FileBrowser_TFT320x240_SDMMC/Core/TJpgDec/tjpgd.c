@@ -240,9 +240,7 @@ static inline void memcpy_16(void *dst, void *src, unsigned int size)
  * см.: http://ijarse.com/images/fullpdf/1457613577_1003B.pdf
  * Copyright (C) 2023, VadRov, all right reserved.
  */
-#ifdef STM32H723xx_H
-__attribute__((section(".itcm_code")))
-#endif
+__attribute__((optimize("O3")))
 static inline void block_idct (int32_t* src, jd_yuv_t* dst)
 {
 	asm volatile(	"mov	r12, #8					\n\t"	//r12 = 8
@@ -507,9 +505,7 @@ static void* alloc_pool (	/* Pointer to allocated memory block (NULL:no memory a
 /*-----------------------------------------------------------------------*/
 /* Create de-quantization and prescaling tables with a DQT segment       */
 /*-----------------------------------------------------------------------*/
-#ifdef STM32H723xx_H
-__attribute__((section(".itcm_code")))
-#endif
+__attribute__((optimize("O3")))
 static JRESULT create_qt_tbl (	/* 0:OK, !0:Failed */
 	JDEC* jd,				/* Pointer to the decompressor object */
 	const uint8_t* data,	/* Pointer to the quantizer tables */
@@ -543,9 +539,7 @@ static JRESULT create_qt_tbl (	/* 0:OK, !0:Failed */
 /*-----------------------------------------------------------------------*/
 /* Create huffman code tables with a DHT segment                         */
 /*-----------------------------------------------------------------------*/
-#ifdef STM32H723xx_H
-__attribute__((section(".itcm_code")))
-#endif
+__attribute__((optimize("O3")))
 static JRESULT create_huffman_tbl (	/* 0:OK, !0:Failed */
 	JDEC* jd,					/* Pointer to the decompressor object */
 	const uint8_t* data,		/* Pointer to the packed huffman tables */
@@ -649,9 +643,7 @@ static JRESULT create_huffman_tbl (	/* 0:OK, !0:Failed */
 /*-----------------------------------------------------------------------*/
 /* Extract a huffman decoded data from input stream                      */
 /*-----------------------------------------------------------------------*/
-#ifdef STM32H723xx_H
-__attribute__((section(".itcm_code")))
-#endif
+__attribute__((optimize("O3")))
 static int huffext (	/* >=0: decoded data, <0: error code */
 	JDEC* jd,			/* Pointer to the decompressor object */
 	unsigned int id,	/* Table ID (0:Y, 1:C) */
