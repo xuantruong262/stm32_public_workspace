@@ -32,6 +32,7 @@
  *----------------------------------------------------------------------------------------------*/
 #define SWAP_PIX_BYTEORDER
 #define STM32H723xx_H
+#define REALSE_FULL_SCREEN
 /* Оптимизация для stm32 cortex-m3/m4/m7
 / 0: Выключена
 / 1: Включена
@@ -40,7 +41,7 @@
 
 
 /* Specifies size of stream input buffer */
-#define	JD_SZBUF		1024
+#define	JD_SZBUF		4096
 
 
 /* Specifies output pixel format.
