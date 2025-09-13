@@ -239,22 +239,19 @@ int main(void)
 			while (LCD_PlayRawVideo(SDCard_FileList[FileSelection].name, &frame_num))
 				;
 			fileFormat = emNone;
-			Browser_FileCtrl(IR_EQ, FileSelection);
 			IsPlayingContent = 0;
+			Browser_FileCtrl(IR_EQ, FileSelection);
 		} else if (fileFormat == emAVI) {
 			IsPlayingContent = 1;
 			uint32_t frame_num = 0;
-			if (f_open(&video_f, SDCard_FileList[FileSelection].name, FA_READ) == FR_OK) {
-				while (LCD_PlayAVIVideo(&video_f))
-					;
-				f_close(&video_f);
-			}
+			AVIaudio_init(&hi2s6);
+			//while (LCD_PlayAVIVideo("SinhRaLaKePhamPhu.avi"));
+			while (LCD_PlayAVIVideo(SDCard_FileList[FileSelection].name));
 			fileFormat = emNone;
-			Browser_FileCtrl(IR_EQ, FileSelection);
 			IsPlayingContent = 0;
+			Browser_FileCtrl(IR_EQ, FileSelection);
 		}
 		//printf("Fileformat: %d\n",fileFormat);
-		HAL_Delay(2000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

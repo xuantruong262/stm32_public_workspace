@@ -12,17 +12,17 @@ static I2S_HandleTypeDef *hI2S = NULL;
 static uint16_t bitsPerSample = 16;
 static uint16_t numChannels = 2;
 static uint32_t sampleRate = 44100;
-static uint32_t dataChunkSize = 0;
+static volatile uint32_t dataChunkSize = 0;
 
 // double buffer
 __attribute__((section(".RAM_D3"), aligned(4)))
-static uint8_t buffer[WAV_BUF_SIZE * 2]; // Use this for I2S6(BDMA)
+static volatile uint8_t buffer[WAV_BUF_SIZE * 2]; // Use this for I2S6(BDMA)
 
 static volatile uint32_t bufFillPos = 0;
 static volatile uint8_t *playRunning = 0;
 
 // file read position
-static uint32_t bytesRemaining = 0;
+static volatile uint32_t bytesRemaining = 0;
 
 // forward
 static int parse_wav_header(FIL *f);
@@ -32,6 +32,27 @@ static void start_dma_transfer(uint8_t *pData, uint32_t length);
 void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s);
 void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s);
 void HAL_I2S_ErrorCallback(I2S_HandleTypeDef *hi2s);
+
+// For AVI
+WAV_Status AVIaudio_init(I2S_HandleTypeDef *hi2s_ptr)
+{
+    hI2S = hi2s_ptr;
+    return WAV_OK;
+}
+
+/* Start playback: read initial double buffers then start DMA */
+void AVIaudio_play(uint32_t block_size, FIL *f){
+	UINT br = 0;
+    f_read(f, buffer, block_size, &br);
+#ifdef USING_CACHE
+            // Clean D Cache Transmiss
+    		SCB_CleanDCache_by_Addr((uint32_t*)buffer, ALIGN32(block_size));
+			__DSB();
+			asm volatile("" ::: "memory");
+#endif
+	HAL_I2S_Transmit(hI2S, (uint16_t*)buffer, block_size/2, HAL_MAX_DELAY);
+}
+
 
 /* Initialize WAV player: mount FS, open file, parse header */
 WAV_Status wav_init(I2S_HandleTypeDef *hi2s_ptr, char *filename, uint8_t *Audio_Playing_Ctrl)
@@ -140,6 +161,11 @@ static void start_dma_transfer(uint8_t *pData, uint32_t length)
 {
     // For 16-bit PCM stereo, length is bytes; HAL_I2S expects 16-bit units count (length / 2)
     uint32_t halfWords = length / 2;
+#ifdef USING_CACHE
+		SCB_InvalidateDCache_by_Addr((uint32_t*)pData, ALIGN32(halfWords));
+        __DSB();
+        asm volatile("" ::: "memory");
+#endif
     HAL_I2S_Transmit_DMA(hI2S, (uint16_t*)pData, halfWords);
 }
 
@@ -155,6 +181,12 @@ void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
     if (toRead > 0) {
         if (f_read(&fil, dst, toRead, &br) == FR_OK) {
             bytesRemaining -= br;
+#ifdef USING_CACHE
+			// Clean D Cache Receive
+//			SCB_InvalidateDCache_by_Addr((uint32_t*)dst, ALIGN32(toRead));
+//	        __DSB();
+//	        asm volatile("" ::: "memory");
+#endif
             if (br < WAV_BUF_SIZE) memset(dst + br, 0, WAV_BUF_SIZE - br);
         } else {
             // read error -> stop
@@ -166,11 +198,18 @@ void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
         wav_deinit();
         // optional: signal end-of-playback flag here
     }
+#ifdef USING_CACHE
+            // Clean D Cache Transmiss
+    		SCB_CleanDCache_by_Addr((uint32_t*)dst, ALIGN32(toRead));
+			__DSB();
+			asm volatile("" ::: "memory");
+#endif
 }
 
 /* Transfer complete: refill second half */
 void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
 {
+#ifndef DEVELOPING
     if (!(*playRunning)) return;
     UINT br;
     uint8_t *dst = buffer + WAV_BUF_SIZE;
@@ -178,6 +217,12 @@ void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
     if (toRead > 0) {
         if (f_read(&fil, dst, toRead, &br) == FR_OK) {
             bytesRemaining -= br;
+#ifdef USING_CACHE
+			// Clean D Cache Receive
+//			SCB_InvalidateDCache_by_Addr((uint32_t*)dst, ALIGN32(toRead));
+//	        __DSB();
+//	        asm volatile("" ::: "memory");
+#endif
             if (br < WAV_BUF_SIZE) memset(dst + br, 0, WAV_BUF_SIZE - br);
         } else {
             wav_stop_play();
@@ -186,12 +231,20 @@ void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
         memset(dst, 0, WAV_BUF_SIZE);
         wav_deinit();
     }
-
+#ifdef USING_CACHE
+            // Clean D Cache Transmiss
+    		SCB_CleanDCache_by_Addr((uint32_t*)dst, ALIGN32(toRead));
+			__DSB();
+			asm volatile("" ::: "memory");
+#endif
     // if bytesRemaining==0 and both halves zero -> stop
     if (bytesRemaining == 0) {
         // If you want to stop immediately after the last buffer played,
         // you could call wav_stop_play() from a safe context (e.g., set a flag and stop in main loop).
     }
+#else
+    // processing here
+#endif
 }
 
 /* Error callback */

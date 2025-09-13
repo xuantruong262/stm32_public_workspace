@@ -41,7 +41,7 @@
 
 
 /* Specifies size of stream input buffer */
-#define	JD_SZBUF		4096
+#define	JD_SZBUF		1024
 
 
 /* Specifies output pixel format.

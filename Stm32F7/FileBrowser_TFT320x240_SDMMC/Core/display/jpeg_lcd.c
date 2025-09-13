@@ -6,7 +6,31 @@ UINT Height_Of_Jpeg = 0;
 //Store the frame buffer
 #ifdef STM32H723xx_H
 extern uint16_t frame_buffer[240][320];
+extern uint32_t video_blockSize;
 #endif
+size_t mem_input(JDEC *jd, uint8_t *buff, size_t nbyte) {
+    UINT rb;
+    uint8_t* dev = (uint8_t*) jd->device;
+
+    if (buff)
+    {
+    	memcpy(buff,dev,nbyte);
+    	jd->device += nbyte;
+    	video_blockSize = video_blockSize - nbyte;
+        return nbyte;
+    }
+    else
+    {
+    	if( (video_blockSize - nbyte) > 0){
+    		jd->device += nbyte;
+    		return nbyte;
+    	}
+    	else{
+    		return 0;
+    	}
+
+    }
+}
 
 UINT STM32_in_func(JDEC* jd, BYTE* buff, UINT nd)
 {
