@@ -28,6 +28,8 @@
 extern SPI_HandleTypeDef hspi1;
 extern SPI_HandleTypeDef hspi2;
 #define SD_SPI_HANDLE hspi1
+#define USING_CACHE
+#define ALIGN32(x)   (((x) + 31) & ~31U)
 
 #define SD_CS_LOW()     HAL_GPIO_WritePin(SD_CS_GPIO_Port,SD_CS_Pin, GPIO_PIN_RESET)
 #define SD_CS_HIGH()    HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_SET)
@@ -38,33 +40,9 @@ extern SPI_HandleTypeDef hspi2;
  ***************************************************************/
 
 #if USE_DMA
-volatile int dma_tx_done = 0;
-volatile int dma_rx_done = 0;
-extern int dma_tx_done_spi2;
-extern int dma_rx_done_spi2;
+volatile int dma_tx_done_spi1 = 0;
+volatile int dma_rx_done_spi1 = 0;
 
- void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
-     if (hspi == &SD_SPI_HANDLE)
-     {
-         dma_tx_done = 1;
-     }
-    else if(hspi == &hspi2){
-        dma_tx_done_spi2 = 1;
-        HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
-    }
- }
-
- void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
-     if (hspi == &hspi1)
-     {
-         dma_rx_done = 1;
-     }
-    else if (hspi == &hspi2)
-    {
-        dma_rx_done_spi2 = 1;
-        HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
-    }
- }
 #endif
 
 static void SD_TransmitByte(uint8_t data) {
@@ -79,9 +57,9 @@ static uint8_t SD_ReceiveByte(void) {
 
 static void SD_TransmitBuffer(const uint8_t *buffer, uint16_t len) {
 #if USE_DMA
-    dma_tx_done = 0;
+	dma_tx_done_spi1 = 0;
     HAL_SPI_Transmit_DMA(&SD_SPI_HANDLE, (uint8_t *)buffer, len);
-    while (!dma_tx_done);
+    while (!dma_tx_done_spi1);
 #else
     HAL_SPI_Transmit(&SD_SPI_HANDLE, (uint8_t *)buffer, len, HAL_MAX_DELAY);
 #endif
@@ -91,9 +69,9 @@ static void SD_ReceiveBuffer(uint8_t *buffer, uint16_t len) {
 #if USE_DMA
 	static uint8_t tx_dummy[512];
     for (int i = 0; i < len; i++) tx_dummy[i] = 0xFF;  // Fill with 0xFF
-    dma_rx_done = 0;
+    dma_rx_done_spi1 = 0;
     HAL_SPI_TransmitReceive_DMA(&hspi1, tx_dummy, buffer, len);
-    while (!dma_rx_done);
+    while (!dma_rx_done_spi1);
 #else
     for (uint16_t i = 0; i < len; i++) {
         buffer[i] = SD_ReceiveByte();

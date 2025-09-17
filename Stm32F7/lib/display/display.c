@@ -4,21 +4,28 @@
 
 // variables
 static SPI_HandleTypeDef *hSPI = NULL;
+extern SPI_HandleTypeDef hspi1;
+
 volatile int dma_tx_done_spi2 = 1;
 volatile int dma_rx_done_spi2 = 0;
+
+
 #define ALIGN32(x)   (((x) + 31) & ~31U)
 // For decode JPEG
 #ifdef STM32H723xx_H
 __attribute__((section(".DTCMRAM"), aligned(4)))
- BYTE Buff[32768]; // 8192  16384  32768   76800
+ BYTE Buff[16384]; // 8192  16384  32768   76800
 #else
 BYTE Buff[8192]; // 8192  16384  32768   76800
 #endif
 
 #ifdef STM32H723xx_H
 __attribute__((section(".RAM_D1"), aligned(4)))
-uint16_t frame_buffer[240][320];
-
+volatile uint16_t FrameBuff[240][320];
+__attribute__((section(".DTCMRAM"), aligned(4)))
+volatile uint8_t Jpeg_frame[76800];
+volatile audioInfo audio_data;
+volatile uint32_t FrameSize_Remain = 0;
 #endif
 // For Watchdog
 #if IWDGG
@@ -27,9 +34,9 @@ extern IWDG_HandleTypeDef hiwdg;
 // For RAW video display
 #ifdef STM32H723xx_H
 __attribute__((section(".RAM_D1"), aligned(4)))
-     uint16_t *FrameA;
+uint16_t *FrameA;
 __attribute__((section(".RAM_D1"), aligned(4)))
-     uint16_t *FrameB;
+uint16_t *FrameB;
 #else
     uint16_t *FrameA;
     uint16_t *FrameB;
@@ -42,41 +49,48 @@ int8_t Cur_Page = 0;
 int8_t Prev_Page = 0;
 extern Browser_FileFormat fileFormat;
 Browser_FileInfo *FileInMenuList;
-uint8_t *IsDisplayContent = NULL;
+volatile uint8_t *IsDisplayContent = NULL;
 char SP_FileFormat[6][5] = { ".jpg", ".bmp", ".wav", ".rgb", ".avi", ".dat" };
 uint8_t num_trunk = 0;
 uint32_t SizePerTrunk = 0;
-// For Interupt callback function
-void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
-	if (hspi == hSPI) { // For TFT display
-		static uint8_t spi_cbTime = 1;
-		num_trunk--;
-		if(num_trunk > 0){
-#ifdef USING_CACHE
-			SCB_CleanDCache_by_Addr((uint32_t*)frame_buffer[ spi_cbTime *  (SizePerTrunk >> 1) / display_w ], SizePerTrunk);
-#endif
-			HAL_SPI_Transmit_DMA(hSPI, (uint8_t*)frame_buffer[ spi_cbTime *  (SizePerTrunk >> 1) / display_w ], SizePerTrunk);
-			spi_cbTime++;
-		}
-		else{
-			spi_cbTime = 1;
-			num_trunk = 0;
-			dma_tx_done_spi2 = 1;
-			HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
-		}
-	}
-}
+uint32_t Start = 0;
+uint32_t End = 0;
+volatile eAVI_type video_type = emAVI_OnlyVideo;
 
-void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
-	if (hspi == hSPI) { // For TFT display
-		dma_rx_done_spi2 = 1;
+
+
+// For Interupt callback function
+void LCD_SPI_TxCpltCb() {
+	static uint8_t spi_cbTime = 1;
+	num_trunk--;
+	if (num_trunk > 0) {
+#ifdef USING_CACHE
+		SCB_CleanDCache_by_Addr(
+				(uint32_t*) FrameBuff[spi_cbTime * (SizePerTrunk >> 1)
+						/ display_w], ALIGN32(SizePerTrunk));
+		__DSB();
+		asm volatile("" ::: "memory");
+#endif
+		HAL_SPI_Transmit_DMA(hSPI,
+				(uint8_t*) FrameBuff[spi_cbTime * (SizePerTrunk >> 1)
+						/ display_w], SizePerTrunk);
+		spi_cbTime++;
+	} else {
+		spi_cbTime = 1;
+		num_trunk = 0;
+		dma_tx_done_spi2 = 1;
 		HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
 	}
 }
 
+
+void LCD_SPI_TxRxCpltCb() {
+	dma_rx_done_spi2 = 1;
+	HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
+}
+
 void SendCommand(uint8_t cmd) {
-	HAL_GPIO_WritePin(TFT_TransMode_GPIO_Port, TFT_TransMode_Pin,
-			GPIO_PIN_RESET); // Command mode
+	HAL_GPIO_WritePin(TFT_TransMode_GPIO_Port, TFT_TransMode_Pin, GPIO_PIN_RESET); // Command mode
 	HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_RESET);
 	HAL_SPI_Transmit(hSPI, &cmd, 1, HAL_MAX_DELAY);
 	HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
@@ -232,17 +246,21 @@ static void video_display(obj_status obj, uint16_t *buf) {
 		SizePerTrunk = total_byte / num_trunk;
         dma_tx_done_spi2 = 0;
 #ifdef USING_CACHE
-        SCB_CleanDCache_by_Addr((uint32_t*)frame_buffer[0], ALIGN32(SizePerTrunk));
+        SCB_CleanDCache_by_Addr((uint32_t*)buf, ALIGN32(SizePerTrunk));
+        __DSB();
+        asm volatile("" ::: "memory");
 #endif
-        HAL_SPI_Transmit_DMA(hSPI, (uint8_t*)frame_buffer[0], SizePerTrunk );
+        HAL_SPI_Transmit_DMA(hSPI, (uint8_t*)buf, SizePerTrunk );
 	} else {
 		SizePerTrunk = total_byte;
         dma_tx_done_spi2 = 0;
 #ifdef USING_CACHE
-        SCB_CleanDCache_by_Addr((uint32_t*)frame_buffer[0], ALIGN32(SizePerTrunk));
+        SCB_CleanDCache_by_Addr((uint32_t*)buf, ALIGN32(SizePerTrunk));
+        __DSB();
+        asm volatile("" ::: "memory");
 #endif
 		//HAL_SPI_Transmit(hSPI, buf, SizePerTrunk,HAL_MAX_DELAY);
-		HAL_SPI_Transmit_DMA(hSPI, buf, SizePerTrunk);
+		HAL_SPI_Transmit_DMA(hSPI, (uint8_t*)buf, SizePerTrunk);
 	}
 }
 
@@ -258,82 +276,57 @@ static void Deallocate_video_buffer(uint16_t **Fr) {
 
 // File browser
 static void Browser_FillBgColor(uint16_t color1, uint16_t color2) {
-	uint8_t data[2][2] = { { color1 >> 8, color1 & 0xFF }, { color2 >> 8, color2
-			& 0xFF } };
-	uint8_t color_state = 1;
-	SendCommand(0x2A);                                        // Column addr set
-	uint8_t col[] = { 0x00, 0x00, (display_w - 1) >> 8, (display_w - 1) & 0xFF }; // x0 to x127
-	SendData(col, 4);
-
-	SendCommand(0x2B);                                           // Row addr set
-	uint8_t row[] = { 0x00, 0x00, (display_h - 1) >> 8, (display_h - 1) & 0xFF }; // y0 to y159
-	SendData(row, 4);
-
-	SendCommand(0x2C); // Memory write
-
-	HAL_GPIO_WritePin(TFT_TransMode_GPIO_Port, TFT_TransMode_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_RESET);
-
+	uint8_t data[2][2] = { { color1 >> 8, color1 & 0xFF }, { color2 >> 8, color2 & 0xFF } };
 	for (int k = 0; k < 8; k++) {
-		for (int i = 0; i < 30; i++) {
-			for (int j = 0; j < display_w; j++) {
-
-				HAL_SPI_Transmit(hSPI, data[k % 2], 2, HAL_MAX_DELAY);
-			}
-		}
+#ifdef USING_CACHE
+        SCB_CleanDCache_by_Addr((uint32_t*)data[!(k%2)], 2);
+#endif
+		Draw_ChunkOfColor(0, k*30, 320, 30, *data[!(k%2)]);
 	}
-
-	HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
 }
-
 // AVI_MPJEG video
+
+
 static uint32_t AVI_DataOffset(FIL *f_Jpeg) {
 	UINT br = 0;
 	uint32_t buf = 0;
 	uint32_t Junk_size = 0;
+	uint32_t List_size = 0;
+	f_lseek(f_Jpeg, 0x38);
+	f_read(f_Jpeg, &buf, 4, &br);
+	video_type = (eAVI_type)buf;
+
 	do {
 		// Find chunk
 		f_read(f_Jpeg, &buf, 4, &br);
+		// Check Video Type
 
 		if (buf == aJunk) { // found JUNK
 			f_read(f_Jpeg, &buf, 4, &br);
 			Junk_size = buf; // JUNK size
 			f_lseek(f_Jpeg, f_tell(f_Jpeg) + Junk_size);
-
-			f_read(f_Jpeg, &buf, 4, &br);
-
-			if (buf == aLIST) { // found LIST
-				f_read(f_Jpeg, &buf, 4, &br);
-				Junk_size = buf;
-				f_read(f_Jpeg, &buf, 4, &br);
-				if (buf == aMovi) { // found Movi
-					return Junk_size;
-				} else {
-					f_lseek(f_Jpeg, f_tell(f_Jpeg) + Junk_size - 4);
-				}
-			}
+			Junk_size = 0;
 		}
+
+		if (buf == aLIST) { // found LIST
+			f_read(f_Jpeg, &buf, 4, &br);
+			List_size = buf;
+			f_read(f_Jpeg, &buf, 4, &br);
+			if (buf == aMovi) { // found Movi
+				return List_size;
+			} else {
+				f_lseek(f_Jpeg, f_tell(f_Jpeg) + List_size - 4);
+			}
+			List_size = 0;
+		}
+
 		if (br < 4) {
 			break;
 		}
 	} while (br);
 	return 0x0;
 }
-/////////////////////////
-void DWT_Init(void) {
-    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // Bật DWT
-    DWT->CYCCNT = 0;                                // Reset counter
-    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;            // Enable cycle counter
-}
 
-uint32_t DWT_GetCycles(void) {
-    return DWT->CYCCNT;
-}
-//uint32_t start = DWT_GetCycles();
-//
-//// ---- Đoạn code cần kiểm tra ----
-//
-//uint32_t end = DWT_GetCycles();
 
 /***********************************API functions for LCD display****************************/
 // ------------------------LCD display------------------------
@@ -354,7 +347,6 @@ uint32_t LCD_DisplayJPEG(const char *filename) {
 
 	// Get the file size
 	JpegFileSize = f_size(&JpegFile);
-
 	// Prepare to decompress the JPEG file
 	Jres = jd_prepare(&Jdec, STM32_in_func, Buff, sizeof(Buff), &JpegFile);
 	if (Jres != JDR_OK) {
@@ -381,23 +373,22 @@ uint32_t LCD_DisplayJPEG(const char *filename) {
 #ifdef REALSE_FULL_SCREEN
 	while (!dma_tx_done_spi2);
 	// Wait DMA
-	LCD_DrawPixData(0, 0, 320, 240, &frame_buffer[0][0]);
+	LCD_DrawPixData(0, 0, 320, 240, &FrameBuff[0][0]);
 #endif
 	// Close the JPEG file
 	f_close(&JpegFile);
 
 	return 0; // Success
 }
-uint32_t JPEG(FIL *JpegFile) {
+
+uint32_t JPEG() {
+
 	JDEC Jdec;          // Decompression object
 	JRESULT Jres;      // Result of JPEG decompression
 	BYTE scale;
-	// Open the JPEG file
-
 	// Prepare to decompress the JPEG file
-	Jres = jd_prepare(&Jdec, STM32_in_func, Buff, sizeof(Buff), JpegFile);
+	Jres = jd_prepare(&Jdec, mem_input, Buff, sizeof(Buff), Jpeg_frame);
 	if (Jres != JDR_OK) {
-		f_close(JpegFile);
 		return 2; // JPEG format error
 	}
 	// Scale
@@ -406,28 +397,24 @@ uint32_t JPEG(FIL *JpegFile) {
 			break;
 		}
 	}
-
 	if (scale) {
 		scale--;
 	}
 	// Start to decompress the JPEG file
 	Jres = jd_decomp(&Jdec, STM32_out_func, scale);
-
 	if (Jres != JDR_OK) {
-		f_close(JpegFile);
 		return 3; // Decompression error
 	}
 #ifdef REALSE_FULL_SCREEN
 	while (!dma_tx_done_spi2);
 	// Wait DMA
-	LCD_DrawPixData(0, 0, 320, 240, &frame_buffer[0][0]);
+	LCD_DrawPixData(0, 0, 320, 240, &FrameBuff[0][0]);
 #endif
 	return 0; // Success
 }
 
 void LCD_Init(SPI_HandleTypeDef *hspi_ptr, uint8_t *LCD_Playing_Ctrl,
 		uint8_t IsHorizol) {
-	DWT_Init();
 	hSPI = hspi_ptr;
 	IsDisplayContent = LCD_Playing_Ctrl;
 	// Initialize the LCD
@@ -525,8 +512,7 @@ void Draw_ChunkOfColor(uint16_t pos_x, uint16_t pos_y, uint16_t width,
 	HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
 }
 
-void LCD_DrawPixData(uint16_t pos_x, uint16_t pos_y, uint16_t width,
-		uint16_t height, uint16_t *data_frame) {
+void LCD_DrawPixData(uint16_t pos_x, uint16_t pos_y, uint16_t width, uint16_t height, uint16_t *data_frame) {
 #ifdef ILI9341
 	SendCommand(0x2A);                                        // Column addr set
 	uint8_t col[] = { pos_x >> 8, pos_x & 0xff, ((pos_x + width - 1) >> 8),
@@ -556,7 +542,7 @@ void LCD_DrawPixData(uint16_t pos_x, uint16_t pos_y, uint16_t width,
 		SizePerTrunk = total_byte / num_trunk;
         dma_tx_done_spi2 = 0;
 #ifdef USING_CACHE
-        SCB_CleanDCache_by_Addr((uint32_t*)frame_buffer[0], SizePerTrunk);
+        SCB_CleanDCache_by_Addr((uint32_t*)FrameBuff[0], SizePerTrunk);
 #endif
         HAL_SPI_Transmit_DMA(hSPI, (uint8_t*)data_frame, SizePerTrunk );
 	} else {
@@ -658,26 +644,48 @@ uint8_t LCD_DisplayBMP(const char *file_name) {
 	return 1;
 }
 // Play AVI MJPEG video from SD card
-uint8_t LCD_PlayAVIVideo(FIL *f_AVI) {
+
+
+uint8_t LCD_PlayAVIVideo(const char *file_name) {
 	UINT br;
-	uint32_t buf = 0;
-	if (!AVI_DataOffset(f_AVI))
+	uint32_t period = 0;
+	uint32_t chunk_type = 0;
+	FIL file;
+
+	if (!f_open(&file, file_name, FA_READ) == FR_OK) {
+		return 0;
+	}
+	if (!AVI_DataOffset(&file))
 		return 0;
 
 	while (1) {
-		while(1){
-			if( f_read(f_AVI, &buf, 8, &br) == FR_OK)
-			{
-				break;
-			}
-		}
+		while(!dma_tx_done_spi2);
+		// Align to even
 		// Decode jpeg
-		JPEG(f_AVI);
+		if(video_type == emAVI_OnlyVideo){
+			if( f_tell(&file) & 0x1 ) {
+				f_lseek(&file, f_tell(&file) + 1);
+			}
+			// Get frame size
+			f_read(&file, &chunk_type, 4, &br);
+			f_read(&file, &FrameSize_Remain, 4, &br);
+			// Get data frame
+			f_read(&file, Jpeg_frame, FrameSize_Remain, &br); // read data input
+			JPEG();
+		}
+		else{
+			AVIaudioLoadFile(&file);
+			start_dma_transfer(4096);
+			while(1);
+			// Play video
+		}
 	}
+	f_close(&file);
+	return 0;
 }
 // Play RAW video from SD card
 uint8_t LCD_PlayRawVideo(const char *file_name, uint32_t *frame_num) {
-	static FIL file;
+	FIL file;
 	UINT br;
 	uint32_t Size_Per_Chunk = total_pix_per_chunk * byte_per_pix;
 	uint32_t base_offset = *frame_num * w_numchunk_in_frame * Size_Per_Chunk;
@@ -685,6 +693,7 @@ uint8_t LCD_PlayRawVideo(const char *file_name, uint32_t *frame_num) {
 	obj_status object2 = { 0, 0, display_w, line_per_chunk };
 	int i = 0;
 	// Check Is video playing?
+	Start = HAL_GetTick();
 	if (*IsDisplayContent == 0) { //Stop and Cancel
 		if (*frame_num != 0) {
 			*frame_num = 0;
@@ -715,7 +724,9 @@ uint8_t LCD_PlayRawVideo(const char *file_name, uint32_t *frame_num) {
 			}
 		}
 #ifdef USING_CACHE
-		SCB_InvalidateDCache_by_Addr((uint32_t*)FrameA, ALIGN32(Size_Per_Chunk - 1));
+		SCB_InvalidateDCache_by_Addr((uint32_t*)FrameB, ALIGN32(Size_Per_Chunk - 1));
+        __DSB();
+        asm volatile("" ::: "memory");
 #endif
 		// Check EOF
 		if (br < (Size_Per_Chunk - 1)) {
@@ -744,7 +755,9 @@ uint8_t LCD_PlayRawVideo(const char *file_name, uint32_t *frame_num) {
 			}
 		}
 #ifdef USING_CACHE
-		SCB_InvalidateDCache_by_Addr((uint32_t*)FrameB, ALIGN32(Size_Per_Chunk - 1));
+		SCB_InvalidateDCache_by_Addr((uint32_t*)FrameA, ALIGN32(Size_Per_Chunk - 1));
+        __DSB();
+        asm volatile("" ::: "memory");
 #endif
 		// Check EOF
 		if (br < (Size_Per_Chunk - 1)) {
@@ -767,7 +780,12 @@ uint8_t LCD_PlayRawVideo(const char *file_name, uint32_t *frame_num) {
 			break;
 		}
 	}
+	End = HAL_GetTick();
+	if(*frame_num%100 == 0){
+		printf("FPS: %d\n", 1000 / (End-Start));
+	}
 	*frame_num += 1;
+
 	return 1;
 }
 // Draw character and string
@@ -867,6 +885,7 @@ void Browser_FileFormatFilter(const char *str) {
 	for (int i = 0; i < 5; i++) {
 		pos = strstr(str, SP_FileFormat[i]);
 		if (pos != NULL) {
+//			printf("[Debug] File Format: %s\n", SP_FileFormat[i]);
 			fileFormat = (Browser_FileFormat) i;
 			break;
 		}

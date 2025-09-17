@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-extern const Diskio_drvTypeDef SD_Driver;
+extern const Diskio_drvTypeDef SPI_SD_Driver;
 DSTATUS SD_disk_status(BYTE drv);
 DSTATUS SD_disk_initialize(BYTE drv);
 DRESULT SD_disk_read(BYTE pdrv, BYTE *buff, DWORD sector, UINT count);

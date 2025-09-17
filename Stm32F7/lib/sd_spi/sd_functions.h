@@ -43,13 +43,13 @@ int sd_get_space_kb(void);
 
 //csv File operations
 // CSV Record structure
-typedef struct CsvRecord {
+typedef struct SPI_CsvRecord {
     char field1[32];
     char field2[32];
     int value;
-} CsvRecord;
+} SPI_CsvRecord;
 
 // CSV reader (caller defines record array)
-int sd_read_csv(const char *filename, CsvRecord *records, int max_records, int *record_count);
+int sd_read_csv(const char *filename, SPI_CsvRecord *records, int max_records, int *record_count);
 
 #endif // __SD_FUNCTIONS_H__

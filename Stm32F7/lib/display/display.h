@@ -24,6 +24,7 @@
 #include "fatfs.h"
 #include "fonts.h"
 #include "core_cm7.h"
+#include "wav_player.h"
 // ST7735
 // ILI9341
 #define ILI9341
@@ -194,6 +195,18 @@ typedef struct Browser_FileInfo
     uint32_t size;
 } Browser_FileInfo;
 
+typedef struct audioInfo
+{
+	uint8_t audio_data[0x15000];
+    uint32_t size;
+} audioInfo;
+
+typedef enum eAVI_type
+{
+	emAVI_None,
+	emAVI_OnlyVideo,
+	emAVI_VideoAudio
+} eAVI_type;
 
 // function prototypes
 void SendCommand(uint8_t cmd);
@@ -209,16 +222,20 @@ void LCD_FillScreen(uint16_t color,uint16_t end_x,uint16_t end_y );
 void LCD_AdjustGamma(void);
 
 void Draw_ChunkOfColor(uint16_t pos_x, uint16_t pos_y, uint16_t width, uint16_t height, uint16_t color);
-
+// For CallBack
+void LCD_SPI_TxCpltCb();
+void LCD_SPI_TxRxCpltCb();
 // Image display
 uint8_t LCD_DisplayBMP(const char * file_name);
 uint32_t LCD_DisplayJPEG(const char* filename);
+uint32_t JPEG(void);
 void LCD_DrawPixData(uint16_t pos_x, uint16_t pos_y, uint16_t width, uint16_t height, uint16_t *data_frame);
 // Text display
 void LCD_WriteChar(uint16_t x, uint16_t y, char ch, FontDef font, uint16_t color, uint16_t bgcolor);
 void LCD_WriteString(uint16_t x, uint16_t y, const char* str, FontDef font, uint16_t color, uint16_t bgcolor);
 // AVI_MPJEG video
-uint8_t LCD_PlayAVIVideo(FIL* f_AVI);
+uint8_t LCD_PlayAudioInAVI(const char *file_name);
+uint8_t LCD_PlayAVIVideo(const char *file_name);
 uint8_t LCD_PlayRawVideo(const char *file_name ,uint32_t *frame_num);
 
 // SD file browser

@@ -13,11 +13,11 @@
  *    You are free to use and modify it for learning and development.
  ******************************************************************************/
 
-#ifndef __SD_BENCHMARK_H__
-#define __SD_BENCHMARK_H__
+#ifndef __SDIO_BENCHMARK_H__
+#define __SDIO_BENCHMARK_H__
 
 #include <stdint.h>
 
-void sd_benchmark(void);
+void sdio_benchmark(void);
 
 #endif // __SD_BENCHMARK_H__

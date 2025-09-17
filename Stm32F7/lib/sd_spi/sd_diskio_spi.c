@@ -66,7 +66,7 @@ DRESULT SD_disk_ioctl(BYTE pdrv, BYTE cmd, void *buff) {
     }
 }
 
-const Diskio_drvTypeDef SD_Driver = {
+const Diskio_drvTypeDef SPI_SD_Driver = {
     SD_disk_initialize,
     SD_disk_status,
     SD_disk_read,

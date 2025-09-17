@@ -57,7 +57,7 @@ int sd_mount(void) {
 	extern uint8_t sd_is_sdhc(void);
 
 	printf("Linking SD driver...\r\n");
-	if (FATFS_LinkDriver(&SD_Driver, sd_path) != 0) {
+	if (FATFS_LinkDriver(&SPI_SD_Driver, sd_path) != 0) {
 		printf("FATFS_LinkDriver failed\n");
 		return FR_DISK_ERR;
 	}
@@ -186,13 +186,13 @@ int sd_read_file(const char *filename, char *buffer, UINT bufsize, UINT *bytes_r
 	return FR_OK;
 }
 
-typedef struct CsvRecord {
+typedef struct SPI_CsvRecord {
 	char field1[32];
 	char field2[32];
 	int value;
-} CsvRecord;
+} SPI_CsvRecord;
 
-int sd_read_csv(const char *filename, CsvRecord *records, int max_records, int *record_count) {
+int sd_read_csv(const char *filename, SPI_CsvRecord *records, int max_records, int *record_count) {
 	FIL file;
 	char line[128];
 	*record_count = 0;

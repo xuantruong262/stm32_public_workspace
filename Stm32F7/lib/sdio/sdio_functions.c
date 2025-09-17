@@ -39,10 +39,10 @@ extern char SDPath[4];
 
 SDFile_Info *SDFileInMenuList = NULL;
 
-FATFS fs;
+FATFS sdio_fs;
 BSP_SD_CardInfo myCardInfo;
 
-int sd_get_space_kb(void) {
+int sdio_get_space_kb(void) {
 	FATFS *pfs;
 	DWORD fre_clust, tot_sect, fre_sect, total_kb, free_kb;
 	FRESULT res = f_getfree(SDPath, &fre_clust, &pfs);
@@ -57,16 +57,16 @@ int sd_get_space_kb(void) {
 	return FR_OK;
 }
 
-int sd_mount(void) {
+int sdio_mount(void) {
 	FRESULT res;
 
 	printf("Attempting mount at %s...\r\n", SDPath);
-	res = f_mount(&fs, SDPath, 1);
+	res = f_mount(&sdio_fs, SDPath, 1);
 	if (res == FR_OK) {
 		printf("SD card mounted successfully at %s\r\n", SDPath);
 
 		// Capacity and free space reporting
-		sd_get_space_kb();
+		sdio_get_space_kb();
 
 		// Get Card Info
 		BSP_SD_GetCardInfo(&myCardInfo);
@@ -82,14 +82,14 @@ int sd_mount(void) {
 	return res;
 }
 
-int sd_unmount(void) {
+int sdio_unmount(void) {
 	FRESULT res = f_mount(NULL, SDPath, 1);
 	printf("SD card unmounted: %s\r\n\r\n\r\n",
 			(res == FR_OK) ? "OK" : "Failed");
 	return res;
 }
 
-int sd_write_file(const char *filename, const char *text) {
+int sdio_write_file(const char *filename, const char *text) {
 	FIL file;
 	UINT bw;
 	FRESULT res = f_open(&file, filename, FA_CREATE_ALWAYS | FA_WRITE);
@@ -102,7 +102,7 @@ int sd_write_file(const char *filename, const char *text) {
 	return (res == FR_OK && bw == strlen(text)) ? FR_OK : FR_DISK_ERR;
 }
 
-int sd_append_file(const char *filename, const char *text) {
+int sdio_append_file(const char *filename, const char *text) {
 	FIL file;
 	UINT bw;
 	FRESULT res = f_open(&file, filename, FA_OPEN_ALWAYS | FA_WRITE);
@@ -121,7 +121,7 @@ int sd_append_file(const char *filename, const char *text) {
 	return (res == FR_OK && bw == strlen(text)) ? FR_OK : FR_DISK_ERR;
 }
 
-int sd_read_file(const char *filename, char *buffer, UINT bufsize,
+int sdio_read_file(const char *filename, char *buffer, UINT bufsize,
 		UINT *bytes_read) {
 	FIL file;
 	*bytes_read = 0;
@@ -157,7 +157,7 @@ typedef struct CsvRecord {
 	int value;
 } CsvRecord;
 
-int sd_read_csv(const char *filename, CsvRecord *records, int max_records,
+int sdio_read_csv(const char *filename, CsvRecord *records, int max_records,
 		int *record_count) {
 	FIL file;
 	char line[128];
@@ -203,27 +203,27 @@ int sd_read_csv(const char *filename, CsvRecord *records, int max_records,
 	return FR_OK;
 }
 
-int sd_delete_file(const char *filename) {
+int sdio_delete_file(const char *filename) {
 	FRESULT res = f_unlink(filename);
 	printf("Delete %s: %s\r\n", filename, (res == FR_OK ? "OK" : "Failed"));
 	return res;
 }
 
-int sd_rename_file(const char *oldname, const char *newname) {
+int sdio_rename_file(const char *oldname, const char *newname) {
 	FRESULT res = f_rename(oldname, newname);
 	printf("Rename %s to %s: %s\r\n", oldname, newname,
 			(res == FR_OK ? "OK" : "Failed"));
 	return res;
 }
 
-FRESULT sd_create_directory(const char *path) {
+FRESULT sdio_create_directory(const char *path) {
 	FRESULT res = f_mkdir(path);
 	printf("Create directory %s: %s\r\n", path,
 			(res == FR_OK ? "OK" : "Failed"));
 	return res;
 }
 
-void sd_list_directory_recursive(const char *path, int depth) {
+void sdio_list_directory_recursive(const char *path, int depth) {
 	DIR dir;
 	FILINFO fno;
 //	char lfn[256];
@@ -263,7 +263,7 @@ void sd_list_directory_recursive(const char *path, int depth) {
 	f_closedir(&dir);
 }
 
-void sd_list_files(SDFile_Info *FileList) {
+void sdio_list_files(SDFile_Info *FileList) {
 	SDFileInMenuList = FileList;
 	printf("📂 Files on SD Card:\r\n");
 	sd_list_directory_recursive(SDPath, 0);

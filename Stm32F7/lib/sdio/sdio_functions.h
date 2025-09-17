@@ -13,8 +13,8 @@
  *    You are free to use and modify it for learning and development.
  ******************************************************************************/
 
-#ifndef __SD_FUNCTIONS_H__
-#define __SD_FUNCTIONS_H__
+#ifndef __SDIO_FUNCTIONS_H__
+#define __SDIO_FUNCTIONS_H__
 
 #include "fatfs.h"
 #include <stdint.h>
@@ -38,24 +38,24 @@ typedef struct SDFile_Info
 } SDFile_Info;
 
 // Mount and unmount
-int sd_mount(void);
-int sd_unmount(void);
+int sdio_mount(void);
+int sdio_unmount(void);
 
 // Basic file operations
-int sd_write_file(const char *filename, const char *text);
-int sd_append_file(const char *filename, const char *text);
-int sd_read_file(const char *filename, char *buffer, UINT bufsize, UINT *bytes_read);
-int sd_delete_file(const char *filename);
-int sd_rename_file(const char *oldname, const char *newname);
+int sdio_write_file(const char *filename, const char *text);
+int sdio_append_file(const char *filename, const char *text);
+int sdio_read_file(const char *filename, char *buffer, UINT bufsize, UINT *bytes_read);
+int sdio_delete_file(const char *filename);
+int sdio_rename_file(const char *oldname, const char *newname);
 
 
 // Directory handling
-FRESULT sd_create_directory(const char *path);
-void sd_list_directory_recursive(const char *path, int depth);
-void sd_list_files(SDFile_Info *FileList);
+FRESULT sdio_create_directory(const char *path);
+void sdio_list_directory_recursive(const char *path, int depth);
+void sdio_list_files(SDFile_Info *FileList);
 
 // Space information
-int sd_get_space_kb(void);
+int sdio_get_space_kb(void);
 
 //csv File operations
 // CSV Record structure
@@ -66,6 +66,6 @@ typedef struct CsvRecord {
 } CsvRecord;
 
 // CSV reader (caller defines record array)
-int sd_read_csv(const char *filename, CsvRecord *records, int max_records, int *record_count);
+int sdio_read_csv(const char *filename, CsvRecord *records, int max_records, int *record_count);
 
 #endif // __SD_FUNCTIONS_H__

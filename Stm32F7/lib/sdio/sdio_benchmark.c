@@ -32,7 +32,7 @@
  * Auto-generated/system-managed code. Changes may be lost.
  ***************************************************************/
 
-uint32_t sd_benchmark_write(const char *filename, uint32_t size_bytes) {
+uint32_t sdio_benchmark_write(const char *filename, uint32_t size_bytes) {
     FIL file;
     UINT written;
     uint8_t buffer[512];
@@ -63,7 +63,7 @@ uint32_t sd_benchmark_write(const char *filename, uint32_t size_bytes) {
     return elapsed;
 }
 
-uint32_t sd_benchmark_read(const char *filename, uint32_t size_bytes) {
+uint32_t sdio_benchmark_read(const char *filename, uint32_t size_bytes) {
     FIL file;
     UINT read;
     uint8_t buffer[512];
@@ -93,15 +93,15 @@ uint32_t sd_benchmark_read(const char *filename, uint32_t size_bytes) {
     return elapsed;
 }
 
-void sd_benchmark(void) {
-    if (sd_mount() == FR_OK) {
+void sdio_benchmark(void) {
+    if (sdio_mount() == FR_OK) {
         printf("Starting Benchmark Test\r\n");
-        uint32_t w = sd_benchmark_write("bench.bin", TEST_SIZE);
-        uint32_t r = sd_benchmark_read("bench.bin", TEST_SIZE);
+        uint32_t w = sdio_benchmark_write("bench.bin", TEST_SIZE);
+        uint32_t r = sdio_benchmark_read("bench.bin", TEST_SIZE);
 
         if (w > 0) printf("Write speed: %lu KB/s\r\n", (TEST_SIZE / 1024 * 1000) / w);
         if (r > 0) printf("Read  speed: %lu KB/s\r\n", (TEST_SIZE / 1024 * 1000) / r);
 
-        sd_unmount();
+        sdio_unmount();
     }
 }
