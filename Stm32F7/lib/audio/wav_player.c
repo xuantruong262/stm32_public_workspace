@@ -1,6 +1,9 @@
 #include "wav_player.h"
 #include <string.h>
 
+#define aLIST 0x5453494c
+#define aMovi 0x69766f6d
+#define aJunk 0x4b4e554a
 // FatFS objects
 static FATFS fs;
 FIL *myFile ;
@@ -25,16 +28,18 @@ static volatile uint32_t bufFillPos = 0;
 static volatile uint8_t *playRunning = 0;
 uint32_t DataRemain = 0;
 static volatile uint8_t remainDataBuf[4096];
-extern uint8_t Jpeg_frame[76800];
-
+static volatile uint8_t *video_frame;
+uint32_t AVIFPS;
+uint8_t AudioVideoSync = 0;
+void (*Vid_Func)(void);
 
 // file read position
 static volatile uint32_t bytesRemaining = 0;
 static volatile uint32_t audio_cnt = 0;
-// forward
+// Local Func
 static int parse_wav_header(FIL *f);
 void start_dma_transfer(uint32_t length);
-
+static uint32_t AVI_DataOffset(FIL *f_Jpeg);
 // For AVI
 WAV_Status AVIaudio_init(I2S_HandleTypeDef *hi2s_ptr, uint8_t *Playing_Ctrl)
 {
@@ -45,9 +50,15 @@ WAV_Status AVIaudio_init(I2S_HandleTypeDef *hi2s_ptr, uint8_t *Playing_Ctrl)
 }
 
 /* Start playback: read initial double buffers then start DMA */
-void AVIaudioLoadFile(FIL *f){
+void AVIaudioLoadFile(FIL *f , uint8_t *vid_frBuf, void (*VideoSteam_Func)(void) ){
+	Vid_Func = VideoSteam_Func;
+	video_frame = vid_frBuf;
 	IsAVI = 1;
 	myFile = f;
+	if (!AVI_DataOffset(myFile))
+		return 0;
+	AudioVideoSync = AVIFPS / 20 + 1;
+	start_dma_transfer(WAV_BUF_SIZE * 2);
 }
 
 /* Initialize WAV player: mount FS, open file, parse header */
@@ -74,10 +85,8 @@ void wav_start_play(char *filename)
 /* stop playback */
 void wav_stop_play(void)
 {
-    //if(!(*playRunning)) return;
     HAL_I2S_DMAStop(hI2S);
     f_close(myFile);
-    f_mount(NULL, "", 1);
     *playRunning = 0;
 }
 
@@ -169,9 +178,9 @@ void Audio_I2S_TxHalfCb(){
 				offset += blockSize;
 			}
 			else if (chunk_type == 0x63643030) {
-				if (audio_cnt % 1 == 0) {
-					f_read(myFile, Jpeg_frame, blockSize, &br); // read data input
-					JPEG();
+				if (audio_cnt % AudioVideoSync == 0) {
+					f_read(myFile, video_frame, blockSize, &br); // read data input
+					Vid_Func();
 				} else {
 					f_lseek(myFile, f_tell(myFile) + blockSize);
 				}
@@ -182,12 +191,8 @@ void Audio_I2S_TxHalfCb(){
 			}
 		}
 		memcpy(buffer,hafBuffer,WAV_BUF_SIZE);
-
 	}
 	else{ // Wav
-	    if (!(*playRunning)){
-	    	return;
-	    }
 	    // fill first half of buffer
 	    UINT br;
 	    uint8_t *dst = buffer;
@@ -199,12 +204,10 @@ void Audio_I2S_TxHalfCb(){
 	            	memset(dst + br, 0, WAV_BUF_SIZE - br);
 	            }
 	        } else {
-	            wav_stop_play();
+	        	*playRunning = 0;
 	        }
 	    } else {
-	        // no more data: fill zeros and stop after whole buffer has played
-	        memset(dst, 0, WAV_BUF_SIZE);
-	        wav_deinit();
+	    	*playRunning = 0;
 	    }
 	}
 #ifdef USING_CACHE
@@ -254,9 +257,9 @@ void Audio_I2S_TxCpltCb(){
 				offset += blockSize;
 			}
 			else if (chunk_type == 0x63643030) {
-				if (audio_cnt % 1 == 0) {
-					f_read(myFile, Jpeg_frame, blockSize, &br); // read data input
-					JPEG();
+				if (audio_cnt % AudioVideoSync == 0) {
+					f_read(myFile, video_frame, blockSize, &br); // read data input
+					Vid_Func();
 				} else {
 					f_lseek(myFile, f_tell(myFile) + blockSize);
 				}
@@ -269,7 +272,6 @@ void Audio_I2S_TxCpltCb(){
 		memcpy(buffer + WAV_BUF_SIZE,hafBuffer,WAV_BUF_SIZE);
 	}
 	else{ // WAV
-	    if (!(*playRunning)) return;
 	    UINT br;
 	    uint8_t *dst = buffer + WAV_BUF_SIZE;
 	    uint32_t toRead = (WAV_BUF_SIZE < bytesRemaining) ? WAV_BUF_SIZE : bytesRemaining;
@@ -278,14 +280,12 @@ void Audio_I2S_TxCpltCb(){
 	            bytesRemaining -= br;
 	            if (br < WAV_BUF_SIZE) memset(dst + br, 0, WAV_BUF_SIZE - br);
 	        } else {
-	            wav_stop_play();
+	        	*playRunning = 0;
 	        }
 	    } else {
-	        memset(dst, 0, WAV_BUF_SIZE);
-	        wav_deinit();
+	    	*playRunning = 0;
 	    }
 	}
-
 #ifdef USING_CACHE
             // Clean D Cache Transmiss
     		SCB_CleanDCache_by_Addr((uint32_t*)buffer, WAV_BUF_SIZE*2);
@@ -297,6 +297,7 @@ void Audio_I2S_TxCpltCb(){
 /* helper to start DMA */
 void start_dma_transfer(uint32_t length)
 {
+
 	uint32_t halfWords = length / 2;
 	Audio_I2S_TxHalfCb();
 	Audio_I2S_TxCpltCb();
@@ -307,8 +308,54 @@ void start_dma_transfer(uint32_t length)
 			asm volatile("" ::: "memory");
 #endif
 	HAL_I2S_Transmit_DMA(hI2S, buffer, halfWords);
+	while(1){
+		if(*playRunning == 0){
+			wav_stop_play();
+			break;
+		}
+	}
 }
 
-/* DMA callbacks - called from HAL IRQ context -------------------------------------------------*/
+static uint32_t AVI_DataOffset(FIL *f_Jpeg) {
+	UINT br = 0;
+	uint32_t buf = 0;
+	uint32_t Junk_size = 0;
+	uint32_t List_size = 0;
+	f_lseek(f_Jpeg, 0x20);
+	f_read(f_Jpeg, &AVIFPS, 4, &br);
+	AVIFPS = 1000000 / AVIFPS;
+
+	f_lseek(f_Jpeg, 0x38);
+	f_read(f_Jpeg, &buf, 4, &br);
+	do {
+		// Find chunk
+		f_read(f_Jpeg, &buf, 4, &br);
+		// Check Video Type
+
+		if (buf == aJunk) { // found JUNK
+			f_read(f_Jpeg, &buf, 4, &br);
+			Junk_size = buf; // JUNK size
+			f_lseek(f_Jpeg, f_tell(f_Jpeg) + Junk_size);
+			Junk_size = 0;
+		}
+
+		if (buf == aLIST) { // found LIST
+			f_read(f_Jpeg, &buf, 4, &br);
+			List_size = buf;
+			f_read(f_Jpeg, &buf, 4, &br);
+			if (buf == aMovi) { // found Movi
+				return List_size;
+			} else {
+				f_lseek(f_Jpeg, f_tell(f_Jpeg) + List_size - 4);
+			}
+			List_size = 0;
+		}
+
+		if (br < 4) {
+			break;
+		}
+	} while (br);
+	return 0x0;
+}
 /* Half complete: refill first half */
 

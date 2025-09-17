@@ -13,7 +13,7 @@
 typedef enum { WAV_OK=0, WAV_ERR } WAV_Status;
 
 // For audio
-void AVIaudioLoadFile(FIL *f);
+void AVIaudioLoadFile(FIL *f , uint8_t *vid_frBuf, void (*VideoStream_Func)(void) );
 WAV_Status AVIaudio_init(I2S_HandleTypeDef *hi2s_ptr, uint8_t *Playing_Ctrl);
 
 /* Start playback: read initial double buffers then start DMA */

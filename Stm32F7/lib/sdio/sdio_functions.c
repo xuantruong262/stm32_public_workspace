@@ -24,6 +24,7 @@ typedef enum efile_format
     emBMP,
     emWAV,
     emRGB,
+	emAVI,
     emDAT,
     emNone
 } efile_format;
@@ -41,6 +42,36 @@ SDFile_Info *SDFileInMenuList = NULL;
 
 FATFS sdio_fs;
 BSP_SD_CardInfo myCardInfo;
+// Filter name
+const char* get_file_extension(const char *filename) {
+    const char *dot = strrchr(filename, '.');  // tìm dấu '.' cuối cùng
+    if(!dot || dot == filename) return "";     // không có '.' hoặc '.' ở đầu (ẩn file)
+    return dot + 1;                            // trả về phần sau '.'
+}
+
+efile_format getFileFormat(const char *str_type){
+	if(strcmp(str_type,"jpg") == 0){
+		return emJPG;
+	}
+	else if(strcmp(str_type,"bmp") == 0){
+		return emBMP;
+	}
+	else if(strcmp(str_type,"wav") == 0){
+		return emWAV;
+	}
+	else if(strcmp(str_type,"rgb") == 0){
+		return emRGB;
+	}
+	else if(strcmp(str_type,"avi") == 0){
+		return emAVI;
+	}
+	else if(strcmp(str_type,"dat") == 0){
+		return emDAT;
+	}
+	else{
+		return emNone;
+	}
+}
 
 int sdio_get_space_kb(void) {
 	FATFS *pfs;
@@ -246,14 +277,17 @@ void sdio_list_directory_recursive(const char *path, int depth) {
 		if (fno.fattrib & AM_DIR) {
 			if (strcmp(name, ".") && strcmp(name, "..")) {
 				printf("%*s📁 %s\r\n", depth * 2, "", name);
+				// File filter
 				memcpy(SDFileInMenuList[num_file].name, name, 50);
+				SDFileInMenuList[num_file].format = getFileFormat(get_file_extension(SDFileInMenuList[num_file].name));
 				char newpath[128];
 				snprintf(newpath, sizeof(newpath), "%s/%s", path, name);
 				num_file++;
-				sd_list_directory_recursive(newpath, depth + 1);
+				sdio_list_directory_recursive(newpath, depth + 1);
 			}
 		} else {
 			memcpy(SDFileInMenuList[num_file].name, name, 50);
+			SDFileInMenuList[num_file].format = getFileFormat(get_file_extension(SDFileInMenuList[num_file].name));
 			printf("%*s📄 %s (%lu bytes)\r\n", depth * 2, "", name,
 					(unsigned long) fno.fsize);
 			num_file++;
@@ -266,6 +300,6 @@ void sdio_list_directory_recursive(const char *path, int depth) {
 void sdio_list_files(SDFile_Info *FileList) {
 	SDFileInMenuList = FileList;
 	printf("📂 Files on SD Card:\r\n");
-	sd_list_directory_recursive(SDPath, 0);
+	sdio_list_directory_recursive(SDPath, 0);
 	printf("\r\n\r\n");
 }

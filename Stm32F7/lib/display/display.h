@@ -236,7 +236,7 @@ void LCD_WriteString(uint16_t x, uint16_t y, const char* str, FontDef font, uint
 // AVI_MPJEG video
 uint8_t LCD_PlayAudioInAVI(const char *file_name);
 uint8_t LCD_PlayAVIVideo(const char *file_name);
-uint8_t LCD_PlayRawVideo(const char *file_name ,uint32_t *frame_num);
+uint8_t LCD_PlayRawVideo(const char *file_name);
 
 // SD file browser
 void Browser_Init(Browser_FileInfo *FileList);

@@ -1,11 +1,17 @@
 #include "itr.h"
 #include "main.h"
+
+//#define USING_SD_SPI1
+
+#ifdef USING_SD_SPI1
 extern SPI_HandleTypeDef hspi1;
+extern int dma_tx_done_spi1;
+extern int dma_rx_done_spi1;
+#endif
+
 extern SPI_HandleTypeDef hspi2;
 extern int dma_tx_done_spi2;
 extern int dma_rx_done_spi2;
-extern int dma_tx_done_spi1;
-extern int dma_rx_done_spi1;
 
 void (*I2S_TXHalfFunc)(void);
 void (*I2S_TXCpltFunc)(void);
@@ -48,21 +54,31 @@ extern uint32_t SizePerTrunk;
 extern uint16_t frame_buffer[240][320];
 ///////SPI//////////////////
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
-    if (hspi == &hspi1)
+#ifdef USING_SD_SPI1
+	if (hspi == &hspi1)
     {
+
     	dma_tx_done_spi1 = 1;
+
     }
-   else if(hspi == &hspi2){
+   else
+#endif
+	if(hspi == &hspi2){
 	   SPI_TXCpltFunc();
    }
 }
 
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
-    if (hspi == &hspi1)
+#ifdef USING_SD_SPI1
+	if (hspi == &hspi1)
     {
+
     	dma_rx_done_spi1 = 1;
+
     }
-   else if (hspi == &hspi2)
+	else
+#endif
+	   if (hspi == &hspi2)
    {
 	   SPI_RXCpltFunc();
    }
