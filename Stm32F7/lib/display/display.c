@@ -23,7 +23,7 @@ BYTE Buff[8192]; // 8192  16384  32768   76800
 __attribute__((section(".RAM_D1"), aligned(4)))
 volatile uint16_t FrameBuff[240][320];
 __attribute__((section(".DTCMRAM"), aligned(4)))
-volatile uint8_t Jpeg_frame[76800];
+volatile uint8_t Jpeg_frame[32768];
 volatile audioInfo audio_data;
 volatile uint32_t FrameSize_Remain = 0;
 #endif
@@ -34,9 +34,9 @@ extern IWDG_HandleTypeDef hiwdg;
 // For RAW video display
 #ifdef STM32H723xx_H
 __attribute__((section(".RAM_D1"), aligned(4)))
-uint16_t *FrameA;
+volatile uint16_t *FrameA;
 __attribute__((section(".RAM_D1"), aligned(4)))
-uint16_t *FrameB;
+volatile uint16_t *FrameB;
 #else
     uint16_t *FrameA;
     uint16_t *FrameB;
@@ -493,13 +493,17 @@ void LCD_DrawPixData(uint16_t pos_x, uint16_t pos_y, uint16_t width, uint16_t he
 		SizePerTrunk = total_byte / num_trunk;
         dma_tx_done_spi2 = 0;
 #ifdef USING_CACHE
-        SCB_CleanDCache_by_Addr((uint32_t*)FrameBuff[0], SizePerTrunk);
+        SCB_CleanDCache_by_Addr((uint32_t*)data_frame, ALIGN32(SizePerTrunk));
+		__DSB();
+		asm volatile("" ::: "memory");
 #endif
         HAL_SPI_Transmit_DMA(hSPI, (uint8_t*)data_frame, SizePerTrunk );
 	} else {
         SizePerTrunk = total_byte;
 #ifdef USING_CACHE
-        SCB_CleanDCache_by_Addr((uint8_t*) data_frame, SizePerTrunk);
+        SCB_CleanDCache_by_Addr((uint32_t*) data_frame, ALIGN32(SizePerTrunk));
+		__DSB();
+		asm volatile("" ::: "memory");
 #endif
         HAL_SPI_Transmit(hSPI, (uint8_t*) data_frame, SizePerTrunk,HAL_MAX_DELAY);
 		HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);
@@ -662,6 +666,7 @@ uint8_t LCD_PlayAVIVideo(const char *file_name) {
 		// Align to even
 		// Decode jpeg
 		if(video_type == emAVI_OnlyVideo){ // AVI only video
+
 			if( f_tell(&file) & 0x1 ) {
 				f_lseek(&file, f_tell(&file) + 1);
 			}
@@ -670,6 +675,12 @@ uint8_t LCD_PlayAVIVideo(const char *file_name) {
 			f_read(&file, &FrameSize_Remain, 4, &br);
 			// Get data frame
 			f_read(&file, Jpeg_frame, FrameSize_Remain, &br); // read data input
+#ifdef USING_CACHE
+			SCB_InvalidateDCache_by_Addr((uint32_t*)Jpeg_frame, ALIGN32(FrameSize_Remain));
+	        __DSB();
+	        asm volatile("" ::: "memory");
+#endif
+	        while (!dma_tx_done_spi2);
 			JPEG();
 		}
 		else{ // AVI with audio + video
