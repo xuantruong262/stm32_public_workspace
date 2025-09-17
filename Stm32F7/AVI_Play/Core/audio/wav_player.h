@@ -1,0 +1,29 @@
+#ifndef WAV_PLAYER_H
+#define WAV_PLAYER_H
+
+#include "ff.h"
+#include "stm32h7xx_hal.h" // đổi theo family (stm32h7xx_hal.h nếu H7)
+#include <stdint.h>
+
+#define USING_CACHE
+#define DEVELOPING
+#define WAV_BUF_SIZE 2048   // bytes per buffer half (nên là multiple of frame size)
+#define ALIGN32(x)   (((x) + 31) & ~31U)
+
+typedef enum { WAV_OK=0, WAV_ERR } WAV_Status;
+
+// For audio
+void AVIaudioLoadFile(FIL *f);
+WAV_Status AVIaudio_init(I2S_HandleTypeDef *hi2s_ptr, uint8_t *Playing_Ctrl);
+
+/* Start playback: read initial double buffers then start DMA */
+
+
+WAV_Status wav_info(char *filename);
+void wav_start_play(char *filename);
+void wav_stop_play(void);
+void wav_deinit(void);
+// Itr func
+void Audio_I2S_TxHalfCb();
+void Audio_I2S_TxCpltCb();
+#endif

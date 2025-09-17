@@ -28,6 +28,7 @@
 #include "sdio_benchmark.h"
 #include "sdio_functions.h"
 #include "wav_player.h"
+#include "itr.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,7 +68,6 @@ uint8_t FileSelection = 0;
 SDFile_Info SDCard_FileList[50];
 
 //For image display
-volatile Browser_FileFormat fileFormat = emNone;
 UINT br;
 uint8_t image_id = 0;
 volatile uint8_t IsPlayingContent = 0;
@@ -198,60 +198,51 @@ int main(void)
 	LCD_Init(&hspi2, &IsPlayingContent, 1);
 	LCD_AdjustGamma();
 	LCD_FillScreen(0x0000, 320, 240);
+#define IDLEx
 	// For SD card
+#ifndef IDLE
 	while (1) {
-		if (sd_mount() == FR_OK) {
+		if (sdio_mount() == FR_OK) {
 			break;
 		}
 	}
 	HAL_Delay(2000);
-//	sd_benchmark();
-	sd_list_files(SDCard_FileList);
+	Itr_InitI2SCBFunc(Audio_I2S_TxHalfCb, Audio_I2S_TxCpltCb);
+	Itr_InitSPICBFunc(LCD_SPI_TxCpltCb, LCD_SPI_TxRxCpltCb);
+	sdio_list_files(SDCard_FileList);
 //	 For File browser
 	Browser_Init((Browser_FileInfo*) SDCard_FileList);
-	fileFormat = emNone;
-
+#endif
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
-		if (fileFormat == emJPG) {
-			IsPlayingContent = 1;
-			LCD_DisplayJPEG(SDCard_FileList[FileSelection].name);
-			fileFormat = emNone;
-			IsPlayingContent = 0;
-		} else if (fileFormat == emBMP) {
-			IsPlayingContent = 1;
-			LCD_DisplayBMP(SDCard_FileList[FileSelection].name);
-			fileFormat = emNone;
-			IsPlayingContent = 0;
-		} else if (fileFormat == emWAV) {
-			IsPlayingContent = 1;
-			if (wav_init(&hi2s6, SDCard_FileList[FileSelection].name,
-					&IsPlayingContent) == WAV_OK) {
-				wav_start_play();
+#ifndef IDLE
+		if(IsPlayingContent){
+			if (SDCard_FileList[FileSelection].format == emJPG) {
+				LCD_DisplayJPEG(SDCard_FileList[FileSelection].name);
+				IsPlayingContent = 0;
+			} else if (SDCard_FileList[FileSelection].format == emBMP) {
+				LCD_DisplayBMP(SDCard_FileList[FileSelection].name);
+				IsPlayingContent = 0;
+			} else if (SDCard_FileList[FileSelection].format == emWAV) {
+				AVIaudio_init(&hi2s6, &IsPlayingContent);
+				wav_start_play(SDCard_FileList[FileSelection].name);
+			} else if (SDCard_FileList[FileSelection].format == emRGB) {
+				LCD_PlayRawVideo(SDCard_FileList[FileSelection].name);
+				IsPlayingContent = 0;
+				Browser_FileCtrl(IR_EQ, FileSelection);
+			} else if (SDCard_FileList[FileSelection].format == emAVI) {
+				uint32_t frame_num = 0;
+				AVIaudio_init(&hi2s6, &IsPlayingContent);
+				LCD_PlayAVIVideo(SDCard_FileList[FileSelection].name);
+				IsPlayingContent = 0;
+				Browser_FileCtrl(IR_EQ, FileSelection);
 			}
-			fileFormat = emNone;
-		} else if (fileFormat == emRGB) {
-			IsPlayingContent = 1;
-			uint32_t frame_num = 0;
-			while (LCD_PlayRawVideo(SDCard_FileList[FileSelection].name, &frame_num))
-				;
-			fileFormat = emNone;
-			IsPlayingContent = 0;
-			Browser_FileCtrl(IR_EQ, FileSelection);
-		} else if (fileFormat == emAVI) {
-			IsPlayingContent = 1;
-			uint32_t frame_num = 0;
-			AVIaudio_init(&hi2s6);
-			//while (LCD_PlayAVIVideo("SinhRaLaKePhamPhu.avi"));
-			while (LCD_PlayAVIVideo(SDCard_FileList[FileSelection].name));
-			fileFormat = emNone;
-			IsPlayingContent = 0;
-			Browser_FileCtrl(IR_EQ, FileSelection);
 		}
-		//printf("Fileformat: %d\n",fileFormat);
+
+#endif
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -274,7 +265,7 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage
   */
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
 
@@ -287,13 +278,13 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 14;
+  RCC_OscInitStruct.PLL.PLLN = 25;
   RCC_OscInitStruct.PLL.PLLP = 1;
-  RCC_OscInitStruct.PLL.PLLQ = 5;
+  RCC_OscInitStruct.PLL.PLLQ = 2;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
-  RCC_OscInitStruct.PLL.PLLFRACN = 512;
+  RCC_OscInitStruct.PLL.PLLFRACN = 0;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -306,13 +297,13 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_D3PCLK1|RCC_CLOCKTYPE_D1PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV2;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
   RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
@@ -392,7 +383,7 @@ static void MX_SDMMC1_SD_Init(void)
   hsd1.Init.ClockPowerSave = SDMMC_CLOCK_POWER_SAVE_DISABLE;
   hsd1.Init.BusWide = SDMMC_BUS_WIDE_4B;
   hsd1.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_ENABLE;
-  hsd1.Init.ClockDiv = 0;
+  hsd1.Init.ClockDiv = 3;
   hsd1.Init.TranceiverPresent = SDMMC_TRANSCEIVER_PRESENT;
   if (HAL_SD_Init(&hsd1) != HAL_OK)
   {
@@ -556,7 +547,7 @@ static void MX_BDMA_Init(void)
 
   /* DMA interrupt init */
   /* BDMA_Channel0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(BDMA_Channel0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(BDMA_Channel0_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(BDMA_Channel0_IRQn);
 
 }
@@ -575,7 +566,7 @@ static void MX_DMA_Init(void)
   HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
   /* DMA1_Stream3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
 
 }
@@ -628,7 +619,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(Debug_Led_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(IR_Remote_EXTI_IRQn, 5, 0);
+  HAL_NVIC_SetPriority(IR_Remote_EXTI_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(IR_Remote_EXTI_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
@@ -652,6 +643,7 @@ void IR_Control(uint32_t Ir_code) {
 		break;
 	case IR_Play_Pause: //Enter
 		Browser_FileCtrl(IR_Play_Pause, FileSelection);
+		IsPlayingContent = 1;
 		break;
 	case IR_Plus:
 		FileSelection++;
