@@ -58,6 +58,8 @@
 
 #include <inttypes.h>
 typedef int64_t Word64;
+#define ARM 1
+#define ARM_TEST
 
 #if (defined _WIN32 && !defined _WIN32_WCE) || (defined __WINS__ && defined _SYMBIAN) || defined(_OPENWAVE_SIMULATOR) || defined(WINCE_EMULATOR)    /* Symbian emulator for Ix86 */
 
@@ -271,7 +273,81 @@ static __inline int CLZ(int x)
 }
 
 #elif defined(__GNUC__) && defined(ARM)
+static __inline__ int MULSHIFT32(int x, int y)
+{
+	int zlow;
+	__asm__ volatile ("smull %0,%1,%2,%3" : "=&r" (zlow), "=r" (y) : "r" (x), "1" (y) : "cc");
+	return y;
+}
 
+static __inline int FASTABS(int x)
+{
+	int sign;
+
+	sign = x >> (sizeof(int) * 8 - 1);
+	x ^= sign;
+	x -= sign;
+
+	return x;
+}
+
+static __inline int CLZ(int x)
+{
+	int numZeros;
+
+	/*if (!x)
+return (sizeof(int) * 8);
+
+numZeros = 0;
+while (!(x & 0x80000000)) {
+numZeros++;
+x <
+}*/
+
+	__asm__ ("clz %0, %1" : "=r" (numZeros) : "r" (x) : "cc");
+
+	return numZeros;
+}
+
+//static __inline int CLZ(int x) {
+//	int numZeros;
+//
+//	if (!x) {
+//		return (sizeof(int) * 8);
+//	}
+//
+//	numZeros = 0;
+//	while (!(x & 0x80000000)) {
+//		numZeros++;
+//		x <<= 1;
+//	}
+//
+//	return numZeros;
+//}
+
+typedef union _U64 {
+	Word64 w64;
+	struct {
+		/* ARM ADS = little endian */
+		unsigned int lo32;
+		signed int hi32;
+	} r;
+} U64;
+
+static __inline Word64 MADD64(Word64 sum64, int x, int y)
+{
+	U64 u;
+	u.w64 = sum64;
+
+	__asm__ volatile ("smlal %0,%1,%2,%3" : "+&r" (u.r.lo32), "+&r" (u.r.hi32) : "r" (x), "r" (y) : "cc");
+
+	return u.w64;
+}
+static __inline Word64 SAR64(Word64 x, int n)
+{
+	return x >> n;
+
+}
 #if defined(ARM7DI)
 	
 typedef long long Word64;
@@ -303,55 +379,55 @@ static __inline Word64 MADD64(Word64 sum64, int x, int y)
 	
 #else
 
-static __inline int MULSHIFT32(int x, int y)
-{
-	/* important rules for smull RdLo, RdHi, Rm, Rs:
-	 *     RdHi and Rm can't be the same register
-	 *     RdLo and Rm can't be the same register
-	 *     RdHi and RdLo can't be the same register
-	 * Note: Rs determines early termination (leading sign bits) so if you want to specify
-	 *   which operand is Rs, put it in the SECOND argument (y)
-	 * For inline assembly, x and y are not assumed to be R0, R1 so it shouldn't matter
-	 *   which one is returned. (If this were a function call, returning y (R1) would 
-	 *   require an extra "mov r0, r1")
-	 */
-	int zlow;
-	__asm__ volatile ("smull %0,%1,%2,%3" : "=&r" (zlow), "=r" (y) : "r" (x), "1" (y)) ;
-
-	return y;
-}
+//static __inline int MULSHIFT32(int x, int y)
+//{
+//	/* important rules for smull RdLo, RdHi, Rm, Rs:
+//	 *     RdHi and Rm can't be the same register
+//	 *     RdLo and Rm can't be the same register
+//	 *     RdHi and RdLo can't be the same register
+//	 * Note: Rs determines early termination (leading sign bits) so if you want to specify
+//	 *   which operand is Rs, put it in the SECOND argument (y)
+//	 * For inline assembly, x and y are not assumed to be R0, R1 so it shouldn't matter
+//	 *   which one is returned. (If this were a function call, returning y (R1) would
+//	 *   require an extra "mov r0, r1")
+//	 */
+//	int zlow;
+//	__asm__ volatile ("smull %0,%1,%2,%3" : "=&r" (zlow), "=r" (y) : "r" (x), "1" (y)) ;
+//
+//	return y;
+//}
 
 #endif
 
-static __inline int FASTABS(int x) 
-{
-	int t=0; /*Really is not necessary to initialiaze only to avoid warning*/
+//static __inline int FASTABS(int x)
+//{
+//	int t=0; /*Really is not necessary to initialiaze only to avoid warning*/
+//
+//	__asm__ volatile (
+//		"eor %0,%2,%2, asr #31;"
+//		"sub %0,%1,%2, asr #31;"
+//		: "=&r" (t)
+//		: "0" (t), "r" (x)
+//	 );
+//
+//	return t;
+//}
 
-	__asm__ volatile (
-		"eor %0,%2,%2, asr #31;"
-		"sub %0,%1,%2, asr #31;"
-		: "=&r" (t) 
-		: "0" (t), "r" (x)
-	 );
-
-	return t;
-}
-
-static __inline int CLZ(int x)
-{
-	int numZeros;
-
-	if (!x)
-		return (sizeof(int) * 8);
-
-	numZeros = 0;
-	while (!(x & 0x80000000)) {
-		numZeros++;
-		x <<= 1;
-	} 
-
-	return numZeros;
-}
+//static __inline int CLZ(int x)
+//{
+//	int numZeros;
+//
+//	if (!x)
+//		return (sizeof(int) * 8);
+//
+//	numZeros = 0;
+//	while (!(x & 0x80000000)) {
+//		numZeros++;
+//		x <<= 1;
+//	}
+//
+//	return numZeros;
+//}
 
 #else
 
