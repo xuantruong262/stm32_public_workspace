@@ -199,7 +199,7 @@ int main(void)
 //	LCD_Init(&hspi2, &IsPlayingContent, 1);
 //	LCD_AdjustGamma();
 //	LCD_FillScreen(0x0000, 320, 240);
-#define IDLE
+#define IDLEx
 	// For SD card
 #ifndef IDLE
 	while (1) {
@@ -223,7 +223,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
-#ifndef IDLE
+#ifndef IDLEx
 		if(IsPlayingContent){
 			if (SDCard_FileList[FileSelection].format == emMP3) {
 				LCD_DisplayJPEG(SDCard_FileList[FileSelection].name);
@@ -267,9 +267,9 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 12;
+  RCC_OscInitStruct.PLL.PLLN = 25;
   RCC_OscInitStruct.PLL.PLLP = 1;
-  RCC_OscInitStruct.PLL.PLLQ = 1;
+  RCC_OscInitStruct.PLL.PLLQ = 2;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
@@ -286,11 +286,11 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_D3PCLK1|RCC_CLOCKTYPE_D1PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV2;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV8;
-  RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
+  RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV4;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
@@ -336,8 +336,8 @@ static void MX_I2S6_Init(void)
   hi2s6.Init.Standard = I2S_STANDARD_PHILIPS;
   hi2s6.Init.DataFormat = I2S_DATAFORMAT_16B;
   hi2s6.Init.MCLKOutput = I2S_MCLKOUTPUT_ENABLE;
-  hi2s6.Init.AudioFreq = I2S_AUDIOFREQ_48K;
-  hi2s6.Init.CPOL = I2S_CPOL_LOW;
+  hi2s6.Init.AudioFreq = I2S_AUDIOFREQ_16K;
+  hi2s6.Init.CPOL = I2S_CPOL_HIGH;
   hi2s6.Init.FirstBit = I2S_FIRSTBIT_MSB;
   hi2s6.Init.WSInversion = I2S_WS_INVERSION_DISABLE;
   hi2s6.Init.Data24BitAlignment = I2S_DATA_24BIT_ALIGNMENT_RIGHT;

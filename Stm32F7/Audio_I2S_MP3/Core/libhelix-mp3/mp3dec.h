@@ -127,7 +127,7 @@ int MP3Decode(HMP3Decoder hMP3Decoder, unsigned char **inbuf, int *bytesLeft, sh
 void MP3GetLastFrameInfo(HMP3Decoder hMP3Decoder, MP3FrameInfo *mp3FrameInfo);
 int MP3GetNextFrameInfo(HMP3Decoder hMP3Decoder, MP3FrameInfo *mp3FrameInfo, unsigned char *buf);
 int MP3FindSyncWord(unsigned char *buf, int nBytes);
-
+int helix_processing(const char *file_name);
 #ifdef __cplusplus
 }
 #endif

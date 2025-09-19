@@ -100,15 +100,7 @@ void HAL_I2S_MspInit(I2S_HandleTypeDef* hi2s)
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SPI6;
-    PeriphClkInitStruct.PLL2.PLL2M = 4;
-    PeriphClkInitStruct.PLL2.PLL2N = 12;
-    PeriphClkInitStruct.PLL2.PLL2P = 3;
-    PeriphClkInitStruct.PLL2.PLL2Q = 4;
-    PeriphClkInitStruct.PLL2.PLL2R = 1;
-    PeriphClkInitStruct.PLL2.PLL2RGE = RCC_PLL2VCIRANGE_3;
-    PeriphClkInitStruct.PLL2.PLL2VCOSEL = RCC_PLL2VCOWIDE;
-    PeriphClkInitStruct.PLL2.PLL2FRACN = 2048.0;
-    PeriphClkInitStruct.Spi6ClockSelection = RCC_SPI6CLKSOURCE_PLL2;
+    PeriphClkInitStruct.Spi6ClockSelection = RCC_SPI6CLKSOURCE_D3PCLK1;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
     {
       Error_Handler();
@@ -256,7 +248,7 @@ void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
     /* SDMMC1 interrupt Init */
-    HAL_NVIC_SetPriority(SDMMC1_IRQn, 1, 0);
+    HAL_NVIC_SetPriority(SDMMC1_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(SDMMC1_IRQn);
     /* USER CODE BEGIN SDMMC1_MspInit 1 */
 
