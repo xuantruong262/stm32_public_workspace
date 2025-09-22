@@ -26,7 +26,11 @@ typedef enum eSDFileFormat
     emSdBMP,
     emSdWAV,
     emSdRGB,
+	emSdAVI,
+	emSdMP3,
     emSdDAT,
+	emSdFolder,
+	emSdFile,
     emSdNone
 } eSDFileFormat;
 
@@ -34,6 +38,9 @@ typedef struct SDFile_Info
 {
     char name[50];
     eSDFileFormat format;
+    struct SDFile_Info *Directory_Ptr;
+    struct SDFile_Info *Previous_Ptr;
+    int childCount;
     uint32_t size;
 } SDFile_Info;
 
@@ -47,13 +54,17 @@ int sdio_append_file(const char *filename, const char *text);
 int sdio_read_file(const char *filename, char *buffer, UINT bufsize, UINT *bytes_read);
 int sdio_delete_file(const char *filename);
 int sdio_rename_file(const char *oldname, const char *newname);
-
+int print_directory(SDFile_Info *dir, int depth, int count);
 
 // Directory handling
 FRESULT sdio_create_directory(const char *path);
-void sdio_list_directory_recursive(const char *path, int depth);
+void sdio_list_directory_recursive(const char *path, int depth, SDFile_Info ** directory);
 void sdio_list_files(SDFile_Info *FileList);
-
+int find_file_recursive(SDFile_Info *dir, int count, const char *target, char *outPath, const char *parent);
+void Move2Folder(SDFile_Info **Current_Page, SDFile_Info Des_Folder,char *path);
+void Back2PrevFolder(SDFile_Info **Current_Page, SDFile_Info *Root ,char *path);
+void TrimPath(char *path);
+void AddPath(char *path, char*next_path);
 // Space information
 int sdio_get_space_kb(void);
 

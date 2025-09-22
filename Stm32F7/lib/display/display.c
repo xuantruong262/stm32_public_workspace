@@ -47,9 +47,9 @@ uint16_t SD_Browser_BGColor[2] = { 0x10a6, 0x08cf };
 int8_t prev_pointer = -1;
 int8_t Cur_Page = 0;
 int8_t Prev_Page = 0;
-volatile Browser_FileInfo *FileInMenuList;
+volatile Browser_FileInfo **FileInMenuList;
 volatile uint8_t *videoPlayRunning = NULL;
-char SP_FileFormat[6][5] = { ".jpg", ".bmp", ".wav", ".rgb", ".avi", ".dat" };
+char SP_FileFormat[7][5] = { ".jpg", ".bmp", ".wav", ".rgb", ".avi", ".mp3" ,".dat" };
 uint8_t num_trunk = 0;
 uint32_t SizePerTrunk = 0;
 uint32_t Start = 0;
@@ -786,8 +786,7 @@ uint8_t LCD_PlayRawVideo(const char *file_name) {
 	return 1;
 }
 // Draw character and string
-void LCD_WriteChar(uint16_t x, uint16_t y, char ch, FontDef font,
-		uint16_t color, uint16_t bgcolor) {
+void LCD_WriteChar(uint16_t x, uint16_t y, char ch, FontDef font, uint16_t color, uint16_t bgcolor) {
 	uint32_t i, b, j;
 	LCD_SetAddressWindow(x, y, font.width, font.height);
 	SendCommand(0x2C);
@@ -829,11 +828,16 @@ void LCD_WriteString(uint16_t x, uint16_t y, const char *str, FontDef font,
 
 // ------------------------File browser-------------------------
 // Initialize file browser
-void Browser_Init(Browser_FileInfo *FileList) {
+void Browser_Init(Browser_FileInfo **FileList) {
 	FileInMenuList = FileList;
+	printf("**FileList: 0x%x,  *FileList: 0x%x, FileList[0]: 0x%x, FileList:0x%x\n",**FileList, *FileList ,FileList[0], FileList);
+	printf("FileInMenuList: 0x%x\n",FileInMenuList);
+	Browser_FileInfo *item = NULL;
 	Browser_MenuBackGround();
 	for (int i = 0; i < 8; i++) {
-		Browser_WriteFile2Menu(i, FileInMenuList[i].name);
+		//item = &FileInMenuList[0];
+		Browser_WriteFile2Menu(i, FileInMenuList[0][i].name);
+		//printf("File: %s\n", FileInMenuList[i].name);
 	}
 	Browser_FileCtrl(IR_None, 0);
 }
@@ -867,7 +871,7 @@ void Browser_Page_Update(uint8_t ptr_location) {
 		if (Cur_Page != Prev_Page) {
 			Browser_MenuBackGround();
 			for (int i = Cur_Page * 8; i < Cur_Page * 8 + 8; i++) {
-				Browser_WriteFile2Menu(i % 8, FileInMenuList[i].name);
+				Browser_WriteFile2Menu(i % 8, FileInMenuList[0][i].name);
 			}
 			Prev_Page = Cur_Page;
 		}

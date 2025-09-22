@@ -8,7 +8,10 @@
 #define a00dc 0x63643030
 #define a00dc 0x63643030
 #define a01wb 0x62773130
-
+#define astrl  0x6c727473
+#define aMJPEG 0x47504a4d
+#define aAuds  0x73647561
+#define aStrf  0x66727473
 // FatFS objects
 static FATFS fs;
 FIL *myFile;
@@ -148,6 +151,7 @@ static uint32_t AVI_DataOffset(FIL *f_Jpeg) {
 	uint32_t buf = 0;
 	uint32_t Junk_size = 0;
 	uint32_t List_size = 0;
+	uint32_t tmp_offset = 0;
 	f_lseek(f_Jpeg, 0x20);
 	f_read(f_Jpeg, &AVIFPS, 4, &br);
 	AVIFPS = 1000000 / AVIFPS;
@@ -169,10 +173,41 @@ static uint32_t AVI_DataOffset(FIL *f_Jpeg) {
 		if (buf == aLIST) { // found LIST
 			f_read(f_Jpeg, &buf, 4, &br);
 			List_size = buf;
+			tmp_offset = f_tell(f_Jpeg);
 			f_read(f_Jpeg, &buf, 4, &br);
 			if (buf == aMovi) { // found Movi
 				return List_size;
-			} else {
+			}
+			else if(buf == astrl){
+				uint32_t dt = 0;
+				while(1){
+					f_read(f_Jpeg, &dt, 4, &br);
+					if(dt == aMJPEG){
+						f_lseek(f_Jpeg, tmp_offset);
+						f_lseek(f_Jpeg, f_tell(f_Jpeg) + List_size);
+						break;
+					}
+					else if(dt == aAuds){
+						while(1){
+							f_read(f_Jpeg, &dt, 4, &br);
+							if(dt == aStrf){
+								f_lseek(f_Jpeg, f_tell(f_Jpeg) + 8);
+								f_read(f_Jpeg, &sampleRate, 4, &br);
+								f_lseek(f_Jpeg, tmp_offset);
+								f_lseek(f_Jpeg, f_tell(f_Jpeg) + List_size);
+								break;
+							}
+							else if(dt == aJunk || dt == a01wb){
+								f_lseek(f_Jpeg, tmp_offset);
+								f_lseek(f_Jpeg, f_tell(f_Jpeg) + List_size);
+								break;
+							}
+						}
+						break;
+					}
+				}
+			}
+			else {
 				f_lseek(f_Jpeg, f_tell(f_Jpeg) + List_size - 4);
 			}
 			List_size = 0;
