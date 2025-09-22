@@ -25,7 +25,10 @@ typedef enum efile_format
     emWAV,
     emRGB,
 	emAVI,
+	emMP3,
     emDAT,
+	emFolder,
+	emFile,
     emNone
 } efile_format;
 
@@ -33,12 +36,15 @@ typedef struct SDFile_Info
 {
     char name[50];
     efile_format format;
+    struct SDFile_Info *Directory_Ptr;
+    struct SDFile_Info *Previous_Ptr;
+    int childCount;
     uint32_t size;
 } SDFile_Info;
 
 extern char SDPath[4];
 
-SDFile_Info *SDFileInMenuList = NULL;
+SDFile_Info *SDBrowser = NULL;
 
 FATFS sdio_fs;
 BSP_SD_CardInfo myCardInfo;
@@ -64,6 +70,9 @@ efile_format getFileFormat(const char *str_type){
 	}
 	else if(strcmp(str_type,"avi") == 0){
 		return emAVI;
+	}
+	else if(strcmp(str_type,"mp3") == 0){
+		return emMP3;
 	}
 	else if(strcmp(str_type,"dat") == 0){
 		return emDAT;
@@ -253,53 +262,171 @@ FRESULT sdio_create_directory(const char *path) {
 			(res == FR_OK ? "OK" : "Failed"));
 	return res;
 }
+uint8_t num_file = 0;
 
-void sdio_list_directory_recursive(const char *path, int depth) {
-	DIR dir;
-	FILINFO fno;
-//	char lfn[256];
-//	fno.fname = lfn;
-//	fno.fsize = sizeof(lfn);
-	uint8_t num_file = 0;
-	FRESULT res = f_opendir(&dir, path);
-	if (res != FR_OK) {
-		printf("%*s[ERR] Cannot open: %s\r\n", depth * 2, "", path);
-		return;
-	}
-
-	while (1) {
-		res = f_readdir(&dir, &fno);
-		if (res != FR_OK || fno.fname[0] == 0)
-			break;
-
-		const char *name = (*fno.fname) ? fno.fname : fno.fname;
-
-		if (fno.fattrib & AM_DIR) {
-			if (strcmp(name, ".") && strcmp(name, "..")) {
-				printf("%*s📁 %s\r\n", depth * 2, "", name);
-				// File filter
-				memcpy(SDFileInMenuList[num_file].name, name, 50);
-				SDFileInMenuList[num_file].format = getFileFormat(get_file_extension(SDFileInMenuList[num_file].name));
-				char newpath[128];
-				snprintf(newpath, sizeof(newpath), "%s/%s", path, name);
-				num_file++;
-				sdio_list_directory_recursive(newpath, depth + 1);
-			}
-		} else {
-			memcpy(SDFileInMenuList[num_file].name, name, 50);
-			SDFileInMenuList[num_file].format = getFileFormat(get_file_extension(SDFileInMenuList[num_file].name));
-			printf("%*s📄 %s (%lu bytes)\r\n", depth * 2, "", name,
-					(unsigned long) fno.fsize);
-			num_file++;
-		}
-
-	}
-	f_closedir(&dir);
+int my_realloc(void **ptr, size_t new_size) {
+    void *tmp = realloc(*ptr, new_size);
+    if (tmp == NULL && new_size > 0) {
+        return -1;  // thất bại
+    }
+    *ptr = tmp;
+    return 0;
 }
 
-void sdio_list_files(SDFile_Info *FileList) {
-	SDFileInMenuList = FileList;
-	printf("📂 Files on SD Card:\r\n");
-	sdio_list_directory_recursive(SDPath, 0);
-	printf("\r\n\r\n");
+void reLink_prevPtr(SDFile_Info *directory, SDFile_Info *prev, uint32_t cnt){
+	char name[256];
+    for (int i = 0; i < cnt; i++) {
+    	directory[i].Previous_Ptr = prev;
+
+    	if(directory[i].format == emFolder){
+    		//printf("Folder: %s\n",directory[i].name);
+    		reLink_prevPtr(directory[i].Directory_Ptr, directory, directory[i].childCount);
+    	}
+    	else{
+    		//printf("=>> File: %s\n",directory[i].name);
+    	}
+//    	printf("Parent: %s, ",directory->name);
+//    	printf("Child: %s \n",directory->Directory_Ptr[i].name);
+    }
+//        if (dir[i].format == emFolder) {
+//            if (find_file_recursive(dir[i].Directory_Ptr, dir[i].childCount, target, outPath, current)) {
+//                return 1; // tìm thấy trong folder con
+//            }
+//        } else {
+//            if (strcmp(dir[i].name, target) == 0) {
+//                strcpy(outPath, current);
+//                return 1; // tìm thấy file
+//            }
+//        }
+
+}
+int sdio_list_directory_recursive(const char *path, int depth, SDFile_Info **directory) {
+    DIR dir;
+    FILINFO fno;
+    int count = 0;
+    FRESULT res = f_opendir(&dir, path);
+
+    if (res != FR_OK) return 0;
+
+    while (1) {
+        res = f_readdir(&dir, &fno);
+        if (res != FR_OK || fno.fname[0] == 0) break;
+
+        if (strcmp(fno.fname, ".") == 0 || strcmp(fno.fname, "..") == 0) continue;
+
+        count++;
+        if (my_realloc((void **)directory, count * sizeof(SDFile_Info)) != 0) {
+            printf("Memory alloc failed!\n");
+            break;
+        }
+
+        SDFile_Info *item = &(*directory)[count-1];
+
+        memset(item, 0, sizeof(SDFile_Info));
+
+        strcpy(item->name, fno.fname);
+        item->size = fno.fsize;
+        item->childCount = 0;
+        item->Directory_Ptr = NULL;
+
+        if (fno.fattrib & AM_DIR) {
+            item->format = emFolder;
+            char newpath[128];
+            snprintf(newpath, sizeof(newpath), "%s/%s", path, fno.fname);
+
+            item->childCount = sdio_list_directory_recursive(newpath, depth+1, &item->Directory_Ptr);
+        } else {
+            item->format = getFileFormat(get_file_extension(item->name));;
+        }
+    }
+
+    f_closedir(&dir);
+    return count;
+}
+
+int find_file_recursive(SDFile_Info *dir, int count, const char *target, char *outPath, const char *parent) {
+    for (int i = 0; i < count; i++) {
+        char current[256];
+        snprintf(current, sizeof(current), "%s/%s", parent, dir[i].name);
+
+        if (dir[i].format == emFolder) {
+            if (find_file_recursive(dir[i].Directory_Ptr, dir[i].childCount, target, outPath, current)) {
+                return 1; // tìm thấy trong folder con
+            }
+        } else {
+            if (strcmp(dir[i].name, target) == 0) {
+                strcpy(outPath, current);
+                return 1; // tìm thấy file
+            }
+        }
+    }
+    return 0; // không tìm thấy
+}
+
+
+void sdio_list_files(SDFile_Info *root) {
+    strcpy(root->name, "0:/");
+    root->format = emFolder;
+    root->Directory_Ptr = NULL;
+    root->size = 0;
+    root->childCount = 0;
+    root->Previous_Ptr = NULL;
+
+    printf("📂 Files on SD Card:\r\n");
+    root->childCount = sdio_list_directory_recursive(SDPath, 0, &root->Directory_Ptr);
+    printf("\nDone scanning SD card.\n");
+    reLink_prevPtr(root->Directory_Ptr, NULL,root->childCount);
+    printf("\nDone Relink previous page.\n");
+}
+void print_directory(SDFile_Info *dir, int depth, int count) {
+    for (int i = 0; i < count; i++) {
+        for (int j = 0; j < depth; j++) printf("  "); // indent
+
+        if (dir[i].format == emFolder) {
+            printf("- Folder: %s\n", dir[i].name);
+            if (dir[i].childCount > 0) {
+                print_directory(dir[i].Directory_Ptr, depth + 1, dir[i].childCount);
+            }
+        } else {
+            printf("+ File: %s (%lu bytes)\n", dir[i].name, dir[i].size);
+        }
+    }
+}
+
+// Move page
+void TrimPath(char *path) {
+	uint8_t EOT = 0;
+	  char *lastSlash = strrchr(path, '/');  // tìm '/' cuối
+	    if (lastSlash != NULL) {
+	    	if(*lastSlash == '/' && *(lastSlash+1) == '\0'){ // End of string
+	    		EOT = 1;
+	    	}
+	        while (lastSlash > path && *lastSlash == '/') {
+	            lastSlash--;
+	        }
+	        if(EOT){
+		        while (lastSlash > path && *lastSlash != '/') {
+		            lastSlash--;
+		        }
+	        }
+	        *lastSlash = '\0';
+	    }
+}
+void AddPath(char *path, char*next_path) {
+	strcat(path,"/");
+	strcat(path,next_path);
+}
+void Move2Folder(SDFile_Info **Current_Page, SDFile_Info Des_Folder,char *path){
+	char sdpath[256];
+	sprintf(sdpath,"%s/%s/",path,Des_Folder.name);
+	strcpy(path,sdpath);
+	Current_Page[0] = Des_Folder.Directory_Ptr;
+}
+void Back2PrevFolder(SDFile_Info **Current_Page, SDFile_Info *Root ,char *path){
+	if(Current_Page[0]->Previous_Ptr != NULL){
+		printf("Path Before trim: %s\n", path);
+		TrimPath(path);
+		printf("Path after trim: %s\n", path);
+		Current_Page[0] = Current_Page[0]->Previous_Ptr;
+	}
 }

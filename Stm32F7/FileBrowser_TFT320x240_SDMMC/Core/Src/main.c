@@ -65,13 +65,14 @@ DMA_HandleTypeDef hdma_usart1_rx;
 //For File browser and UART
 uint8_t firmware_data[1024];
 volatile uint8_t FileSelection = 0;
-SDFile_Info SDCard_FileList[50];
-
+SDFile_Info FileListTree;
+SDFile_Info *Current_Page;
 //For image display
 UINT br;
 uint8_t image_id = 0;
 volatile uint8_t IsPlayingContent = 0;
-
+char path[256];
+char SDFullName[256];
 //For IR Remote control
 uint32_t tempCode;
 uint8_t bitIndex;
@@ -198,50 +199,108 @@ int main(void)
 	LCD_Init(&hspi2, &IsPlayingContent, 1);
 	LCD_AdjustGamma();
 	LCD_FillScreen(0x0000, 320, 240);
-#define IDLEx
+#define IDLE
 	// For SD card
-#ifndef IDLE
+
 	while (1) {
 		if (sdio_mount() == FR_OK) {
 			break;
 		}
 	}
 	HAL_Delay(2000);
+	IsPlayingContent = 0;
+
+	sdio_list_files(&FileListTree);
+    // In toàn bộ cây
+    //print_directory(FileListTree.Directory_Ptr, 0, FileListTree.childCount);
+
+    // Truy xuất trực tiếp
+
+
+#ifndef IDLEx
 	Itr_InitI2SCBFunc(Audio_I2S_TxHalfCb, Audio_I2S_TxCpltCb);
 	Itr_InitSPICBFunc(LCD_SPI_TxCpltCb, LCD_SPI_TxRxCpltCb);
-	sdio_list_files(SDCard_FileList);
 //	 For File browser
-	Browser_Init((Browser_FileInfo*) SDCard_FileList);
+	/*Point to root page*/
+
+	memset(path,0,256);
+	memset(SDFullName,0,256);
+	strcat(path,"0:/");
+	//snprintf(path, sizeof(path), "%s", FileListTree.name);
+	Current_Page = FileListTree.Directory_Ptr;
+	//printf("Path: %s\n", path);
+	printf("&Current_Page: 0x%x, Current_Page: 0x%x\n, ", &Current_Page, Current_Page);
+	Browser_Init(&Current_Page);
+
+//	if (find_file_recursive(Current_Page, Current_Page->childCount,
+//			"image9_320x240.jpg", path, "0:")) {
+//		printf("Found: %s\n", path);
+//		//f_open(&fil, path, FA_READ);
+//	} else {
+//		printf("File not found!\n");
+//	}
 #endif
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
-#ifndef IDLE
+#ifdef IDLE
 		if(IsPlayingContent){
-			if (SDCard_FileList[FileSelection].format == emJPG) {
-				LCD_DisplayJPEG(SDCard_FileList[FileSelection].name);
-				IsPlayingContent = 0;
-			} else if (SDCard_FileList[FileSelection].format == emBMP) {
-				LCD_DisplayBMP(SDCard_FileList[FileSelection].name);
-				IsPlayingContent = 0;
-			} else if (SDCard_FileList[FileSelection].format == emWAV) {
-				AVIaudio_init(&hi2s6, &IsPlayingContent);
-				wav_start_play(SDCard_FileList[FileSelection].name);
-			} else if (SDCard_FileList[FileSelection].format == emRGB) {
-				LCD_PlayRawVideo(SDCard_FileList[FileSelection].name);
-				IsPlayingContent = 0;
+
+			if (Current_Page[FileSelection].format == emJPG) {
+				//AddPath(path, Current_Page[FileSelection].name);
+				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
+				printf("Name in path: %s\n",SDFullName);
+				LCD_DisplayJPEG(SDFullName);
+				while(IsPlayingContent);
+//				IsPlayingContent = 0;
+			} else if (Current_Page[FileSelection].format == emBMP) {
+				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
+				printf("Name in path: %s\n",SDFullName);
+				LCD_DisplayBMP(SDFullName);
+				while(IsPlayingContent);
+//				IsPlayingContent = 0;
+			} else if (Current_Page[FileSelection].format == emWAV) {
+				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
+				printf("Name in path: %s\n",SDFullName);
+				Audio_Init(&hi2s6, &IsPlayingContent);
+				wav_start_play(SDFullName);
+				while(IsPlayingContent);
+			} else if (Current_Page[FileSelection].format == emRGB) {
+				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
+				printf("Name in path: %s\n",SDFullName);
+				LCD_PlayRawVideo(SDFullName);
+//				IsPlayingContent = 0;
+				while(IsPlayingContent);
+				LCD_Init(&hspi2, &IsPlayingContent, 1);
+				LCD_AdjustGamma();
 				Browser_FileCtrl(IR_EQ, FileSelection);
-			} else if (SDCard_FileList[FileSelection].format == emAVI) {
-				uint32_t frame_num = 0;
-				AVIaudio_init(&hi2s6, &IsPlayingContent);
-				LCD_PlayAVIVideo(SDCard_FileList[FileSelection].name);
-				IsPlayingContent = 0;
+			} else if (Current_Page[FileSelection].format == emAVI) {
+				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
+				printf("Name in path: %s\n",SDFullName);
+				Audio_Init(&hi2s6, &IsPlayingContent);
+				LCD_PlayAVIVideo(SDFullName);
+				while(IsPlayingContent);
+				LCD_Init(&hspi2, &IsPlayingContent, 1);
+				LCD_AdjustGamma();
+//				IsPlayingContent = 0;
 				Browser_FileCtrl(IR_EQ, FileSelection);
+			} else if (Current_Page[FileSelection].format == emMP3) {
+				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
+				printf("Name in path: %s\n",SDFullName);
+				Audio_Init(&hi2s6, &IsPlayingContent);
+				mp3_start_play(SDFullName);
+				while(IsPlayingContent);
+//				IsPlayingContent = 0;
+				Browser_FileCtrl(IR_EQ, FileSelection);
+			} else if (Current_Page[FileSelection].format == emFolder) {
+				Move2Folder(&Current_Page,Current_Page[FileSelection], path);
+				FileSelection = 0;
+				Browser_Init(&Current_Page);
+				IsPlayingContent = 0;
 			}
 		}
-
 #endif
     /* USER CODE END WHILE */
 
@@ -655,8 +714,12 @@ void IR_Control(uint32_t Ir_code) {
 		}
 		break;
 	case IR_EQ: //Back
-		Browser_FileCtrl(IR_EQ, FileSelection);
+		if (IsPlayingContent == 0) {
+			Back2PrevFolder(&Current_Page, &FileListTree, path);
+		}
+		printf("Back: %s\n", Current_Page->name);
 		IsPlayingContent = 0;
+		Browser_FileCtrl(IR_EQ, FileSelection);
 		break;
 	case IR_0:
 		break;

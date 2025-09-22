@@ -184,7 +184,10 @@ typedef enum Browser_FileFormat
     emWAV,
     emRGB,
 	emAVI,
+	emMP3,
     emDAT,
+	emFolder,
+	emFile,
     emNone
 } Browser_FileFormat;
 
@@ -192,6 +195,9 @@ typedef struct Browser_FileInfo
 {
     char name[50];
     Browser_FileFormat format;
+    struct Browser_FileInfo *Directory_Ptr;
+    struct Browser_FileInfo *Previous_Ptr;
+    int childCount;
     uint32_t size;
 } Browser_FileInfo;
 
@@ -239,7 +245,7 @@ uint8_t LCD_PlayAVIVideo(const char *file_name);
 uint8_t LCD_PlayRawVideo(const char *file_name);
 
 // SD file browser
-void Browser_Init(Browser_FileInfo *FileList);
+void Browser_Init(Browser_FileInfo **FileList);
 void Browser_MenuBackGround();
 void Browser_FillCtrlPtr(uint8_t row, uint16_t color);
 void Browser_WriteFile2Menu(uint8_t N_o, const char *str);

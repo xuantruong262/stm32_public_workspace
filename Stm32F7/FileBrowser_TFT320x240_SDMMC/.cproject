@@ -53,6 +53,7 @@
 									<listOptionValue builtIn="false" value="../Core/display"/>
 									<listOptionValue builtIn="false" value="../Core/sdio"/>
 									<listOptionValue builtIn="false" value="../Core/interupt"/>
+									<listOptionValue builtIn="false" value="../Core/libhelix-mp3"/>
 									<listOptionValue builtIn="false" value="../FATFS/App"/>
 									<listOptionValue builtIn="false" value="../Core/Inc"/>
 									<listOptionValue builtIn="false" value="../Core/TJpgDec"/>
@@ -155,6 +156,7 @@
 									<listOptionValue builtIn="false" value="../Core/Inc"/>
 									<listOptionValue builtIn="false" value="../Core/display"/>
 									<listOptionValue builtIn="false" value="../Core/sdio"/>
+									<listOptionValue builtIn="false" value="../Core/libhelix-mp3"/>
 									<listOptionValue builtIn="false" value="../Core/interupt"/>
 									<listOptionValue builtIn="false" value="../Core/audio"/>
 									<listOptionValue builtIn="false" value="../Core/TjpgDec"/>
