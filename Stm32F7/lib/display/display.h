@@ -13,8 +13,8 @@
  *    You are free to use and modify it for learning and development.
  ******************************************************************************/
 
-#ifndef __ST7735_DISPLAY_H__
-#define __ST7735_DISPLAY_H__
+#ifndef __DISPLAY_H__
+#define __DISPLAY_H__
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -28,7 +28,7 @@
 // ST7735
 // ILI9341
 #define ILI9341
-#define SDBrower_ptr_color 0xe682
+#define SDBrower_ptr_color 0x0fc1
 // This define for type of TFT display
 #ifdef ILI9341
 #define display_w 320
@@ -149,6 +149,7 @@
 #define IR_7  0x00FF42BD
 #define IR_8  0x00FF4AB5
 #define IR_9  0x00FF52AD
+#define IR_BadCode  0xFFFFFFF1
 
 #define aLIST 0x5453494c
 #define aMovi 0x69766f6d
@@ -186,6 +187,7 @@ typedef enum Browser_FileFormat
 	emAVI,
 	emMP3,
     emDAT,
+	emTXT,
 	emFolder,
 	emFile,
     emNone
@@ -248,7 +250,7 @@ uint8_t LCD_PlayRawVideo(const char *file_name);
 void Browser_Init(Browser_FileInfo **FileList);
 void Browser_MenuBackGround();
 void Browser_FillCtrlPtr(uint8_t row, uint16_t color);
-void Browser_WriteFile2Menu(uint8_t N_o, const char *str);
+//void Browser_WriteFile2Menu(uint8_t N_o, const char *str, Browser_FileFormat fm);
 void Browser_Page_Update(uint8_t ptr_location);
 void Browser_FileCtrl(uint32_t button_code, uint8_t Sel_N_o);
 

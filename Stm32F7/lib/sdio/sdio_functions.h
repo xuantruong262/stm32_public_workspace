@@ -29,6 +29,7 @@ typedef enum eSDFileFormat
 	emSdAVI,
 	emSdMP3,
     emSdDAT,
+	emSdTXT,
 	emSdFolder,
 	emSdFile,
     emSdNone
@@ -61,8 +62,8 @@ FRESULT sdio_create_directory(const char *path);
 void sdio_list_directory_recursive(const char *path, int depth, SDFile_Info ** directory);
 void sdio_list_files(SDFile_Info *FileList);
 int find_file_recursive(SDFile_Info *dir, int count, const char *target, char *outPath, const char *parent);
-void Move2Folder(SDFile_Info **Current_Page, SDFile_Info Des_Folder,char *path);
-void Back2PrevFolder(SDFile_Info **Current_Page, SDFile_Info *Root ,char *path);
+//uint8_t Move2Folder(SDFile_Info **Crt_Page, SDFile_Info Des_Folder,char *pth);
+void Back2PrevFolder(SDFile_Info **Crt_Page, SDFile_Info *Root ,char *pth);
 void TrimPath(char *path);
 void AddPath(char *path, char*next_path);
 // Space information
