@@ -37,7 +37,7 @@
 			{
 				"command" : 1,
 				"file" : 1,
-				"line" : 175,
+				"line" : 177,
 				"parent" : 2
 			},
 			{
@@ -49,7 +49,7 @@
 			{
 				"command" : 3,
 				"file" : 1,
-				"line" : 169,
+				"line" : 171,
 				"parent" : 2
 			},
 			{
@@ -105,6 +105,14 @@
 				{
 					"backtrace" : 4,
 					"path" : "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/Core/audio"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/Core/interupt"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/Core/libhelix-mp3"
 				},
 				{
 					"backtrace" : 3,
@@ -225,6 +233,14 @@
 				{
 					"backtrace" : 4,
 					"path" : "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/Core/audio"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/Core/interupt"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "C:/Users/ADMIN/Desktop/stm32_git_workspace/stm32_public_workspace/Stm32F7/FileBrowser_TFT320x240_SDMMC/Core/libhelix-mp3"
 				},
 				{
 					"backtrace" : 3,

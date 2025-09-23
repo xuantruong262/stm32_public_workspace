@@ -261,6 +261,7 @@ uint8_t mp3_start_play(char *filename) {
 	helix_processing(filename);
 	printf("Finished Convert Mp3 to Wav!!!\n");
 	wav_start_play("rec.wav");
+	sdio_delete_file("rec.wav");
 
 }
 

@@ -27,6 +27,7 @@ typedef enum efile_format
 	emAVI,
 	emMP3,
     emDAT,
+	emTXT,
 	emFolder,
 	emFile,
     emNone
@@ -76,6 +77,9 @@ efile_format getFileFormat(const char *str_type){
 	}
 	else if(strcmp(str_type,"dat") == 0){
 		return emDAT;
+	}
+	else if(strcmp(str_type,"txt") == 0){
+		return emTXT;
 	}
 	else{
 		return emNone;
@@ -285,19 +289,8 @@ void reLink_prevPtr(SDFile_Info *directory, SDFile_Info *prev, uint32_t cnt){
     	else{
     		//printf("=>> File: %s\n",directory[i].name);
     	}
-//    	printf("Parent: %s, ",directory->name);
-//    	printf("Child: %s \n",directory->Directory_Ptr[i].name);
     }
-//        if (dir[i].format == emFolder) {
-//            if (find_file_recursive(dir[i].Directory_Ptr, dir[i].childCount, target, outPath, current)) {
-//                return 1; // tìm thấy trong folder con
-//            }
-//        } else {
-//            if (strcmp(dir[i].name, target) == 0) {
-//                strcpy(outPath, current);
-//                return 1; // tìm thấy file
-//            }
-//        }
+
 
 }
 int sdio_list_directory_recursive(const char *path, int depth, SDFile_Info **directory) {
@@ -375,7 +368,7 @@ void sdio_list_files(SDFile_Info *root) {
     printf("📂 Files on SD Card:\r\n");
     root->childCount = sdio_list_directory_recursive(SDPath, 0, &root->Directory_Ptr);
     printf("\nDone scanning SD card.\n");
-    reLink_prevPtr(root->Directory_Ptr, NULL,root->childCount);
+    reLink_prevPtr(root->Directory_Ptr, root,root->childCount);
     printf("\nDone Relink previous page.\n");
 }
 void print_directory(SDFile_Info *dir, int depth, int count) {
@@ -396,7 +389,7 @@ void print_directory(SDFile_Info *dir, int depth, int count) {
 // Move page
 void TrimPath(char *path) {
 	uint8_t EOT = 0;
-	  char *lastSlash = strrchr(path, '/');  // tìm '/' cuối
+	  char *lastSlash = strrchr(path, '/');
 	    if (lastSlash != NULL) {
 	    	if(*lastSlash == '/' && *(lastSlash+1) == '\0'){ // End of string
 	    		EOT = 1;
@@ -409,24 +402,27 @@ void TrimPath(char *path) {
 		            lastSlash--;
 		        }
 	        }
-	        *lastSlash = '\0';
+	        *(lastSlash+1) = '\0';
 	    }
 }
 void AddPath(char *path, char*next_path) {
 	strcat(path,"/");
 	strcat(path,next_path);
 }
-void Move2Folder(SDFile_Info **Current_Page, SDFile_Info Des_Folder,char *path){
-	char sdpath[256];
-	sprintf(sdpath,"%s/%s/",path,Des_Folder.name);
-	strcpy(path,sdpath);
-	Current_Page[0] = Des_Folder.Directory_Ptr;
-}
-void Back2PrevFolder(SDFile_Info **Current_Page, SDFile_Info *Root ,char *path){
-	if(Current_Page[0]->Previous_Ptr != NULL){
-		printf("Path Before trim: %s\n", path);
-		TrimPath(path);
-		printf("Path after trim: %s\n", path);
-		Current_Page[0] = Current_Page[0]->Previous_Ptr;
+//uint8_t Move2Folder(SDFile_Info **Crt_Page, SDFile_Info Des_Folder = 0,char *pth){
+//	char sdpath[256];
+//	if(Des_Folder.Directory_Ptr != NULL){
+//		sprintf(sdpath,"%s/%s/",pth,Des_Folder.name);
+//		strcpy(pth,sdpath);
+//		Crt_Page[0] = Des_Folder.Directory_Ptr;
+//		Crt_Page[0]->Previous_Ptr->childCount = Des_Folder.childCount;
+//		return 1;
+//	}
+//	return 0;
+//}
+void Back2PrevFolder(SDFile_Info **Crt_Page, SDFile_Info *Root ,char *pth){
+	if(Crt_Page[0]->Previous_Ptr != NULL){
+		TrimPath(pth);
+		Crt_Page[0] = Crt_Page[0]->Previous_Ptr;
 	}
 }

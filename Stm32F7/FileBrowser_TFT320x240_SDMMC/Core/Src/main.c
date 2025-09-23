@@ -211,10 +211,7 @@ int main(void)
 	IsPlayingContent = 0;
 
 	sdio_list_files(&FileListTree);
-    // In toàn bộ cây
     //print_directory(FileListTree.Directory_Ptr, 0, FileListTree.childCount);
-
-    // Truy xuất trực tiếp
 
 
 #ifndef IDLEx
@@ -226,19 +223,10 @@ int main(void)
 	memset(path,0,256);
 	memset(SDFullName,0,256);
 	strcat(path,"0:/");
-	//snprintf(path, sizeof(path), "%s", FileListTree.name);
+
 	Current_Page = FileListTree.Directory_Ptr;
-	//printf("Path: %s\n", path);
-	printf("&Current_Page: 0x%x, Current_Page: 0x%x\n, ", &Current_Page, Current_Page);
 	Browser_Init(&Current_Page);
 
-//	if (find_file_recursive(Current_Page, Current_Page->childCount,
-//			"image9_320x240.jpg", path, "0:")) {
-//		printf("Found: %s\n", path);
-//		//f_open(&fil, path, FA_READ);
-//	} else {
-//		printf("File not found!\n");
-//	}
 #endif
   /* USER CODE END 2 */
 
@@ -249,56 +237,65 @@ int main(void)
 		if(IsPlayingContent){
 
 			if (Current_Page[FileSelection].format == emJPG) {
-				//AddPath(path, Current_Page[FileSelection].name);
 				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
-				printf("Name in path: %s\n",SDFullName);
+				printf("Jpg image file path: %s\n",SDFullName);
 				LCD_DisplayJPEG(SDFullName);
 				while(IsPlayingContent);
-//				IsPlayingContent = 0;
 			} else if (Current_Page[FileSelection].format == emBMP) {
 				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
-				printf("Name in path: %s\n",SDFullName);
+				printf("BMP file path: %s\n",SDFullName);
 				LCD_DisplayBMP(SDFullName);
 				while(IsPlayingContent);
-//				IsPlayingContent = 0;
 			} else if (Current_Page[FileSelection].format == emWAV) {
 				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
-				printf("Name in path: %s\n",SDFullName);
+				printf("Wav file path: %s\n",SDFullName);
 				Audio_Init(&hi2s6, &IsPlayingContent);
 				wav_start_play(SDFullName);
 				while(IsPlayingContent);
 			} else if (Current_Page[FileSelection].format == emRGB) {
 				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
-				printf("Name in path: %s\n",SDFullName);
+				printf("Raw video file path: %s\n",SDFullName);
 				LCD_PlayRawVideo(SDFullName);
-//				IsPlayingContent = 0;
 				while(IsPlayingContent);
 				LCD_Init(&hspi2, &IsPlayingContent, 1);
 				LCD_AdjustGamma();
 				Browser_FileCtrl(IR_EQ, FileSelection);
 			} else if (Current_Page[FileSelection].format == emAVI) {
 				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
-				printf("Name in path: %s\n",SDFullName);
+				printf("AVI file path: %s\n",SDFullName);
 				Audio_Init(&hi2s6, &IsPlayingContent);
 				LCD_PlayAVIVideo(SDFullName);
 				while(IsPlayingContent);
 				LCD_Init(&hspi2, &IsPlayingContent, 1);
 				LCD_AdjustGamma();
-//				IsPlayingContent = 0;
 				Browser_FileCtrl(IR_EQ, FileSelection);
 			} else if (Current_Page[FileSelection].format == emMP3) {
 				sprintf(SDFullName,"%s/%s",path,Current_Page[FileSelection].name);
-				printf("Name in path: %s\n",SDFullName);
+				printf("MP3 file path: %s\n",SDFullName);
 				Audio_Init(&hi2s6, &IsPlayingContent);
 				mp3_start_play(SDFullName);
 				while(IsPlayingContent);
-//				IsPlayingContent = 0;
 				Browser_FileCtrl(IR_EQ, FileSelection);
 			} else if (Current_Page[FileSelection].format == emFolder) {
-				Move2Folder(&Current_Page,Current_Page[FileSelection], path);
-				FileSelection = 0;
-				Browser_Init(&Current_Page);
+				printf("Folder path: %s/%s \n",path, Current_Page[FileSelection].name);
 				IsPlayingContent = 0;
+				if(Current_Page[FileSelection].Directory_Ptr != NULL){
+					size_t s = Current_Page[FileSelection].childCount;
+					strcat(path,"/");
+					strcat(path,Current_Page[FileSelection].name);
+					printf("New Folder path: %s\n", path);
+					Current_Page = Current_Page[FileSelection].Directory_Ptr;
+					Current_Page->Previous_Ptr->childCount = s;
+					FileSelection = 0;
+					Browser_Init(&Current_Page);
+					Browser_FileCtrl(IR_None, FileSelection);
+
+				}
+				else{
+					printf("Folder is empty\n");
+					Browser_FileCtrl(IR_BadCode, FileSelection);
+				}
+
 			}
 		}
 #endif

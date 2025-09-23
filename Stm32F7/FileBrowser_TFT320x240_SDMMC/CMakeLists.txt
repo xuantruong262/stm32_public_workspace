@@ -60,7 +60,9 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Core/display
     Core/sdio
     Core/TJpgDec
-    Core/audio/
+    Core/audio
+    Core/interupt
+    Core/libhelix-mp3
 )
 
 # Add project symbols (macros)

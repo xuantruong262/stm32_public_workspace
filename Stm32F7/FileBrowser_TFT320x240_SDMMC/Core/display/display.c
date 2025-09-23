@@ -49,7 +49,7 @@ int8_t Cur_Page = 0;
 int8_t Prev_Page = 0;
 volatile Browser_FileInfo **FileInMenuList;
 volatile uint8_t *videoPlayRunning = NULL;
-char SP_FileFormat[7][5] = { ".jpg", ".bmp", ".wav", ".rgb", ".avi", ".mp3" ,".dat" };
+char SP_FileFormat[8][5] = { ".jpg", ".bmp", ".wav", ".rgb", ".avi", ".mp3" ,".dat", ".txt"};
 uint8_t num_trunk = 0;
 uint32_t SizePerTrunk = 0;
 uint32_t Start = 0;
@@ -827,17 +827,35 @@ void LCD_WriteString(uint16_t x, uint16_t y, const char *str, FontDef font,
 }
 
 // ------------------------File browser-------------------------
+// Write file name to menu
+static void Browser_WriteFile2Menu(uint8_t N_o, const char *str, Browser_FileFormat fm) {
+	char st[28];
+	memset(st,0,28);
+
+	uint32_t str_len = strlen(str);
+	if(str_len > 27){
+		memcpy(st,str,24);
+		strcat(st,SP_FileFormat[fm]);
+	}else{
+		memcpy(st, str, 27);
+	}
+
+	if(fm == emFolder){
+		LCD_WriteString(8, N_o * 30 + 6, st, Font_11x18, 0xe7a5, SD_Browser_BGColor[N_o % 2]);
+	}
+	else
+	{
+		LCD_WriteString(8, N_o * 30 + 6, st, Font_11x18, 0xffff, SD_Browser_BGColor[N_o % 2]);
+	}
+
+}
 // Initialize file browser
 void Browser_Init(Browser_FileInfo **FileList) {
 	FileInMenuList = FileList;
-	printf("**FileList: 0x%x,  *FileList: 0x%x, FileList[0]: 0x%x, FileList:0x%x\n",**FileList, *FileList ,FileList[0], FileList);
-	printf("FileInMenuList: 0x%x\n",FileInMenuList);
-	Browser_FileInfo *item = NULL;
+	size_t childTotal = FileInMenuList[0][0].Previous_Ptr->childCount;
 	Browser_MenuBackGround();
-	for (int i = 0; i < 8; i++) {
-		//item = &FileInMenuList[0];
-		Browser_WriteFile2Menu(i, FileInMenuList[0][i].name);
-		//printf("File: %s\n", FileInMenuList[i].name);
+	for (int i = 0; i < childTotal; i++) {
+		Browser_WriteFile2Menu(i, FileInMenuList[0][i].name, FileInMenuList[0][i].format);
 	}
 	Browser_FileCtrl(IR_None, 0);
 }
@@ -851,13 +869,7 @@ void Browser_FillCtrlPtr(uint8_t row, uint16_t color) {
 	Draw_ChunkOfColor(0, row * 30, 4, 30, color);
 	prev_pointer = row;
 }
-// Write file name to menu
-void Browser_WriteFile2Menu(uint8_t N_o, const char *str) {
-	char st[28];
-	memcpy(st, str, 27);
-	LCD_WriteString(8, N_o * 30 + 6, st, Font_11x18, 0xffff,
-			SD_Browser_BGColor[N_o % 2]);
-}
+
 // Fill menu background
 void Browser_MenuBackGround() {
 	Browser_FillBgColor(0x10a6, 0x08cf);
@@ -870,15 +882,19 @@ void Browser_Page_Update(uint8_t ptr_location) {
 		Cur_Page = ptr_location / 8;
 		if (Cur_Page != Prev_Page) {
 			Browser_MenuBackGround();
-			for (int i = Cur_Page * 8; i < Cur_Page * 8 + 8; i++) {
-				Browser_WriteFile2Menu(i % 8, FileInMenuList[0][i].name);
+			size_t childTotal = FileInMenuList[0][0].Previous_Ptr->childCount;
+			int end_page = childTotal;
+			if(childTotal > 7){ //17
+				end_page = ( (childTotal - 8*Cur_Page) > 8 ) ? 8 : (childTotal - 8*Cur_Page);
+			}
+			for (int i = Cur_Page * 8; i < Cur_Page * 8 + end_page; i++) {
+				Browser_WriteFile2Menu(i % 8, FileInMenuList[0][i].name,FileInMenuList[0][i].format);
 			}
 			Prev_Page = Cur_Page;
 		}
 		Browser_FillCtrlPtr(ptr_location % 8, SDBrower_ptr_color);
 	}
 }
-// File format filter
 
 // File control
 void Browser_FileCtrl(uint32_t button_code, uint8_t Sel_N_o) {
@@ -887,9 +903,14 @@ void Browser_FileCtrl(uint32_t button_code, uint8_t Sel_N_o) {
 	}
 	if (button_code == IR_Play_Pause) { //Enter
 
-	} else if (button_code == IR_EQ) { //Back
+	}
+	else if (button_code == IR_EQ) { //Back
 		Browser_MenuBackGround();
 		Prev_Page = -1;
+	}
+	else if(button_code == IR_BadCode){
+		Browser_FillCtrlPtr(Sel_N_o, 0xf9a1);
+		return;
 	}
 	Browser_Page_Update(Sel_N_o);
 

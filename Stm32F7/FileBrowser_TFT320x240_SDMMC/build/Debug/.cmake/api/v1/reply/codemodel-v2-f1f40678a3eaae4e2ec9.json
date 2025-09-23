@@ -64,28 +64,28 @@
 				{
 					"directoryIndex" : 1,
 					"id" : "FatFs::@768a070a0fe75716b479",
-					"jsonFile" : "target-FatFs-Debug-6f4118770fc697b07099.json",
+					"jsonFile" : "target-FatFs-Debug-539ad10ed1dcaf2b2caa.json",
 					"name" : "FatFs",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "FileBrowser_TFT320x240_SDMMC::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-FileBrowser_TFT320x240_SDMMC-Debug-6870ffcc5a155ef09945.json",
+					"jsonFile" : "target-FileBrowser_TFT320x240_SDMMC-Debug-d3ec892e6196ffaf7edf.json",
 					"name" : "FileBrowser_TFT320x240_SDMMC",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 1,
 					"id" : "LibJPEG::@768a070a0fe75716b479",
-					"jsonFile" : "target-LibJPEG-Debug-d43a6308a1bf9faab2fc.json",
+					"jsonFile" : "target-LibJPEG-Debug-bcfca1868de41d9bc63b.json",
 					"name" : "LibJPEG",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 1,
 					"id" : "STM32_Drivers::@768a070a0fe75716b479",
-					"jsonFile" : "target-STM32_Drivers-Debug-57ca87ca1cbf17867ca4.json",
+					"jsonFile" : "target-STM32_Drivers-Debug-a6de97f79811dae8c823.json",
 					"name" : "STM32_Drivers",
 					"projectIndex" : 0
 				}
