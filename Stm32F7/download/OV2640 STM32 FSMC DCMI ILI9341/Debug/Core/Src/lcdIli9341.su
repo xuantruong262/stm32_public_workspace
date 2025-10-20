@@ -1,0 +1,9 @@
+../Core/Src/lcdIli9341.c:41:6:lcdIli9341_setArea	24	static
+../Core/Src/lcdIli9341.c:58:6:lcdIli9341_setAreaRead	24	static
+../Core/Src/lcdIli9341.c:78:6:lcdIli9341_drawRect	32	static
+../Core/Src/lcdIli9341.c:90:18:lcdIli9341_getDrawAddress	4	static
+../Core/Src/lcdIli9341.c:96:6:lcdIli9341_init	16	static
+../Core/Src/lcdIli9341.c:198:20:lcdIli9341_writeCmd	16	static
+../Core/Src/lcdIli9341.c:207:20:lcdIli9341_writeData	16	static
+../Core/Src/lcdIli9341.c:215:20:lcdIli9341_readData	16	static
+../Core/Src/lcdIli9341.c:227:10:convRGB565	24	static

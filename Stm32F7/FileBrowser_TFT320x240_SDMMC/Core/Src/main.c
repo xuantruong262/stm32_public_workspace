@@ -199,7 +199,7 @@ int main(void)
 	LCD_Init(&hspi2, &IsPlayingContent, 1);
 	LCD_AdjustGamma();
 	LCD_FillScreen(0x0000, 320, 240);
-#define IDLE
+#define IDLEx
 	// For SD card
 
 	while (1) {
@@ -212,7 +212,8 @@ int main(void)
 
 	sdio_list_files(&FileListTree);
     //print_directory(FileListTree.Directory_Ptr, 0, FileListTree.childCount);
-
+	Itr_InitI2SCBFunc(Audio_I2S_TxHalfCb, Audio_I2S_TxCpltCb);
+	LCD_DisplayBMP("0:/image/image2_rgb888_320x240.bmp");
 
 #ifndef IDLEx
 	Itr_InitI2SCBFunc(Audio_I2S_TxHalfCb, Audio_I2S_TxCpltCb);
@@ -439,7 +440,7 @@ static void MX_SDMMC1_SD_Init(void)
   hsd1.Init.ClockPowerSave = SDMMC_CLOCK_POWER_SAVE_DISABLE;
   hsd1.Init.BusWide = SDMMC_BUS_WIDE_4B;
   hsd1.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_ENABLE;
-  hsd1.Init.ClockDiv = 4;
+  hsd1.Init.ClockDiv = 2;
   if (HAL_SD_Init(&hsd1) != HAL_OK)
   {
     Error_Handler();

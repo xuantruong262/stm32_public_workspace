@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "compare": "cpp",
+        "main.h": "c",
+        "jpeg_lcd.h": "c",
+        "display.h": "c",
+        "cstdlib": "c",
+        "wav_player.h": "c",
+        "stm32h7xx_hal.h": "c"
+    },
+    "cortex-debug.variableUseNaturalFormat": true
+}
