@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "fatfs.h"
+#include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -29,6 +30,7 @@
 #include "wav_player.h"
 #include "itr.h"
 #include "ov2640.h"
+#include "usbd_cdc_if.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -227,6 +229,7 @@ int main(void)
   MX_SDMMC1_SD_Init();
   MX_DCMI_Init();
   MX_I2C4_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 	// System peripheral
 	for(int i = 0;i < 240;i++){
@@ -248,19 +251,10 @@ int main(void)
 	LCD_FillScreen(0x0000, 320, 240);
 	Itr_InitSPICBFunc(LCD_SPI_TxCpltCb, LCD_SPI_TxRxCpltCb);
 
-	HAL_StatusTypeDef sta;
-
-//	HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, FrameBuff, 320*(240-12)/2);
-
 	// Camera OV2640
     ov2640_Init(0x60, CAMERA_Monitor);
     HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)FrameBuff, 320*240/2);
-//	HAL_Delay(3000);
 
-//	CAMERA_IO_Write(0x60, 0xFF, 0x01);
-//	CAMERA_IO_Write(0x60, 0x15, 0x00); // Đảm bảo PCLK chạy liên tục
-
-//	LCD_DrawPixData(0, 0, 320, 240, p_lcdData);
 #define IDLEx
 	// For SD card
 //	while (1) {
@@ -293,7 +287,10 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	uint32_t now = 0;
+	uint32_t next = 2000;
 	while (1) {
+		now = HAL_GetTick();
 		if(done_flag == 1){
 			//HAL_Delay(1);
 			HAL_DCMI_Stop(&hdcmi);
@@ -301,16 +298,11 @@ int main(void)
 			HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, FrameBuff, 320*240/2);
 			done_flag = 0;
 		}
-
-		//LCD_DrawPixData(0, 0, 320, 240, FrameBuff);
-//		  HAL_GPIO_WritePin(RST_CAM_GPIO_Port, RST_CAM_Pin, GPIO_PIN_RESET);  //hardware reset
-//		  HAL_Delay(1000);
-//		  HAL_GPIO_WritePin(RST_CAM_GPIO_Port, RST_CAM_Pin, GPIO_PIN_SET);
-//		HAL_Delay(50);
-//		LCD_DrawPixData(0, 0, 320, 240, FrameBuff);
-//		for(int i = 0;i < 240;i++){
-//			memset(FrameBuff[i],0,320*2);
+//		if (now > next) {
+//			CDC_Transmit_HS("xuantruong\n", 11);
+//			next += 2000;
 //		}
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -340,19 +332,20 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = 64;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 17;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 5;
+  RCC_OscInitStruct.PLL.PLLN = 48;
   RCC_OscInitStruct.PLL.PLLP = 1;
-  RCC_OscInitStruct.PLL.PLLQ = 2;
+  RCC_OscInitStruct.PLL.PLLQ = 5;
   RCC_OscInitStruct.PLL.PLLR = 2;
-  RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
+  RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_2;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
-  RCC_OscInitStruct.PLL.PLLFRACN = 1536;
+  RCC_OscInitStruct.PLL.PLLFRACN = 0;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -448,7 +441,7 @@ static void MX_I2C4_Init(void)
 
   /* USER CODE END I2C4_Init 1 */
   hi2c4.Instance = I2C4;
-  hi2c4.Init.Timing = 0x20B0C4FE;
+  hi2c4.Init.Timing = 0x307075B1;
   hi2c4.Init.OwnAddress1 = 0;
   hi2c4.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c4.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
