@@ -407,6 +407,8 @@ void LCD_Init(SPI_HandleTypeDef *hspi_ptr, uint8_t *LCD_Playing_Ctrl, uint8_t Is
 // Fill all screen by color
 void LCD_FillScreen(uint16_t color, uint16_t end_x, uint16_t end_y) {
 	uint8_t data[2] = { color >> 8, color & 0xFF };
+	uint16_t dt[320];
+	memset(dt,data,320*2);
 	uint16_t w = end_x;
 	uint16_t h = end_y;
 	SendCommand(0x2A);                                        // Column addr set
@@ -421,8 +423,8 @@ void LCD_FillScreen(uint16_t color, uint16_t end_x, uint16_t end_y) {
 
 	HAL_GPIO_WritePin(TFT_TransMode_GPIO_Port, TFT_TransMode_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_RESET);
-	for (int i = 0; i < w * h; i++) {
-		HAL_SPI_Transmit(hSPI, data, 2, HAL_MAX_DELAY);
+	for (int i = 0; i < w; i++) {
+		HAL_SPI_Transmit(hSPI, dt, 320*2, HAL_MAX_DELAY);
 	}
 
 	HAL_GPIO_WritePin(TFT_CS_GPIO_Port, TFT_CS_Pin, GPIO_PIN_SET);

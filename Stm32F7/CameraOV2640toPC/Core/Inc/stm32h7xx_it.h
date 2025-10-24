@@ -62,6 +62,7 @@ void SPI2_IRQHandler(void);
 void USART1_IRQHandler(void);
 void EXTI15_10_IRQHandler(void);
 void SDMMC1_IRQHandler(void);
+void OTG_HS_EP1_OUT_IRQHandler(void);
 void OTG_HS_IRQHandler(void);
 void DCMI_PSSI_IRQHandler(void);
 void BDMA_Channel0_IRQHandler(void);

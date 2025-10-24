@@ -86,7 +86,7 @@ uint8_t bitIndex;
 uint8_t cmd;
 uint8_t cmdli;
 uint32_t code;
-
+volatile uint8_t picture_capture = 0;
 extern volatile uint16_t FrameBuff[240][320];
 //extern uint16_t FrameBuffB[240][320];
 extern uint8_t Jpeg_frame[32768];
@@ -204,23 +204,19 @@ void send_jpeg(uint8_t *jpeg_buf, uint32_t jpeg_size)
     header[4] = (jpeg_size >> 16) & 0xFF;
     header[5] = (jpeg_size >> 24) & 0xFF;
     if(jpeg_size != 0){
-        // Gửi header
-        //while (CDC_Transmit_HS(header, 6) != USBD_OK);
         CDC_Transmit_HS(header, 6);
         HAL_Delay(1);
-        // Gửi dữ liệu JPEG (chia block 64 byte)
         const uint32_t CHUNK = 512;
         for (uint32_t i = 0; i < jpeg_size; i += CHUNK) {
             uint32_t len = (jpeg_size - i > CHUNK) ? CHUNK : (jpeg_size - i);
-            //while (CDC_Transmit_HS(&jpeg_buf[i], len) != USBD_OK);
             CDC_Transmit_HS(&jpeg_buf[i], len);
-            //memset(&jpeg_buf[i],0,len);
             HAL_Delay(1);
         }
     }
-    HAL_Delay(20);
+    HAL_Delay(80);
 
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -290,11 +286,12 @@ int main(void)
 	LCD_AdjustGamma();
 	LCD_FillScreen(0x0000, 320, 240);
 	Itr_InitSPICBFunc(LCD_SPI_TxCpltCb, LCD_SPI_TxRxCpltCb);
-
+	//uint8_t *ss = "xuantruong";
+	//LCD_WriteString(0, 0,ss , Font_11x18, 0xe7a5, 0x10a6);
 	// Camera OV2640
     ov2640_Init(0x60, CAMERA_Movie);
-    HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)FrameBuff,  64*1024/4);
-
+    HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, (uint32_t)FrameBuff,  320*240/2);
+    //LCD_WriteString(0, 0, "After receive the Jpeg Image STM32 is gonna send the image to PC b USB OTS", Font_11x18, 0xe7a5, 0x10a6);
 #define IDLEx
 	// For SD card
 //	while (1) {
@@ -334,20 +331,15 @@ int main(void)
 	while (1) {
 		//now = HAL_GetTick();
 		if(done_flag == 1){
+			//LCD_DrawPixData(0, pos_y, width, height, data_frame)
 			HAL_Delay(1);
 			HAL_DCMI_Stop(&hdcmi);
-//			find_jpeg_size(FrameBuff, sizeof(FrameBuff));
-			cam_jpg_size = find_jpeg_size(FrameBuff, 64*1024/4);
-			if( FrameBuff[0][0] == 0xd8ff ){
+			cam_jpg_size = find_jpeg_size(FrameBuff, 320*240/2);
+			if( FrameBuff[0][0] == 0xd8ff){
 				send_jpeg(FrameBuff,cam_jpg_size);
 			}
-			//for(int i = 0;i < 240;i++){
-				//memset(&FrameBuff[cam_jpg_size],0,320);
-				memset(&FrameBuff[0],0,320*2*240);
-//				memset(&FrameBuff[80],0,320*2*80);
-//				memset(&FrameBuff[160],0,320*2*80);
-			//}
-			HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, FrameBuff,  64*1024/4);
+			memset(&FrameBuff[0],0,320*2*240);
+			HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_SNAPSHOT, FrameBuff,  320*240/2);
 			done_flag = 0;
 			cnt++;
 		}
@@ -886,6 +878,7 @@ void IR_Control(uint32_t Ir_code) {
 		Browser_FileCtrl(IR_EQ, FileSelection);
 		break;
 	case IR_0:
+		picture_capture = 1;
 		break;
 	case IR_100_Plus:
 		FileSelection = 18;

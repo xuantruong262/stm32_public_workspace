@@ -22,7 +22,12 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#include "fonts.h"
+extern FontDef Font_11x18;
+char st[256];
+uint8_t not_done = 0;
+int RX_Size = 0;
+uint32_t offset = 0;
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -265,7 +270,48 @@ static int8_t CDC_Receive_HS(uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 11 */
   USBD_CDC_SetRxBuffer(&hUsbDeviceHS, &Buf[0]);
+
   USBD_CDC_ReceivePacket(&hUsbDeviceHS);
+//  memset(st,0,256);
+
+
+  if (sscanf(Buf, "L:%d,", &RX_Size) == 1) {
+	  //offset = strstr(Buf,",") - Buf;
+	  memset(st,0,256);
+	  uint8_t *Buff = strstr(Buf,",") + 1;
+	  uint32_t len = *Len - (Buff-Buf);
+       if(RX_Size > len){
+    	   not_done = 1;
+    	   memcpy(st,Buff,len);
+    	   offset += len;
+    	   RX_Size = RX_Size - len;
+       }
+       else{
+    	   memcpy(st,Buff,len);
+    	   LCD_FillScreen(0x0000, 320, 240);
+    	   LCD_WriteString(0, 0, st, Font_11x18, 0xe7a5, 0x10a6);
+       }
+   } else {
+       if(not_done){
+//    	   strcat(st,Buf);
+    	   memcpy(&st[offset],Buf,*Len);
+    	   RX_Size = RX_Size - *Len;
+    	   if(RX_Size <= 0){
+
+    		   RX_Size = 0;
+    		   not_done = 0;
+    		   offset = 0;
+    		   LCD_FillScreen(0x0000, 320, 240);
+    		   LCD_WriteString(0, 0, st, Font_11x18, 0xe7a5, 0x10a6);
+    	   }
+    	   else{
+    		   offset += *Len;
+    	   }
+       }
+   }
+//  sprintf(st,"%s\n",Buf);
+
+
   return (USBD_OK);
   /* USER CODE END 11 */
 }
