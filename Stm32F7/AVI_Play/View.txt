@@ -1,0 +1,20 @@
+View_Task {
+    while(streaming) {
+
+        Signal_Received = Wait_For_View_Signal()
+        
+        // Handle Video Request
+        if (Signal_Received == SIGNAL_VIDEO_READY) {
+            // Kickoff top half of the screen via SPI DMA (using our chunk limit workaround)
+            DMA_SPI_Transmit_DMA(&g_registry.current_visible_video_buffer[0], 38400)
+        }
+        
+        // Handle Audio Request
+        if (Signal_Received == SIGNAL_AUDIO_READY) {
+            // If the hardware I2S DMA is currently idle, feed it to start the audio engine
+            if (I2S_Hardware_Is_Silent()) {
+                Trigger_I2S_DMA_Playback()
+            }
+        }
+    }
+}
