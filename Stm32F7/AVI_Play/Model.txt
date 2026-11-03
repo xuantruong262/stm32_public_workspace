@@ -1,0 +1,42 @@
+Model_Task {
+    current_write_video = VideoBuffer1
+    
+    while(streaming) {
+        
+        Read_SD_Bytes(SD_Staging_Buffer, 8) 
+        chunk_type = Parse_AVI_Header_Type(SD_Staging_Buffer)
+        chunk_size = Parse_AVI_Header_Size(SD_Staging_Buffer)
+
+        if (chunk_type == AVI_AUDIO_CHUNK) {
+            Wait_Until(IsAudioBuf1Free == true OR IsAudioBuf2Free == true)
+            
+            if (IsAudioBuf1Free == true) {
+                Read_SD(SD_Staging_Buffer, chunk_size)
+                Decode_Audio_To_PCM(SD_Staging_Buffer, AudioBuffer1)
+                IsAudioBuf1Free = false // Lock it for hardware
+            } else {
+                Read_SD(SD_Staging_Buffer, chunk_size)
+                Decode_Audio_To_PCM(SD_Staging_Buffer, AudioBuffer2)
+                IsAudioBuf2Free = false // Lock it for hardware
+            }
+            Notify_View(SIGNAL_AUDIO_READY)
+        }
+        
+        else if (chunk_type == AVI_VIDEO_CHUNK) {
+            Read_SD(SD_Staging_Buffer, chunk_size)
+          
+            Decode_JPEG_Frame(SD_Staging_Buffer, current_write_video)
+
+            Wait_Until(IsVideoTransmitComplete == true)
+            IsVideoTransmitComplete = false
+            
+            g_registry.current_visible_video_buffer = current_write_video
+            Notify_View(SIGNAL_VIDEO_READY)
+            
+
+            current_write_video = (current_write_video == VideoBuffer1) ? VideoBuffer2 : VideoBuffer1
+        }
+        
+        Check queue(STOP or BACK) -> Cleanly close file -> break
+    }
+}
