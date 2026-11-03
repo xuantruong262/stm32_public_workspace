@@ -1,0 +1,43 @@
+#ifndef BOOT_FLASH_LAYOUT_H
+#define BOOT_FLASH_LAYOUT_H
+
+#include <stdint.h>
+
+/* STM32H723xG: 1 MiB single-bank flash, eight 128 KiB sectors. */
+#define BOOT_FLASH_BASE                 0x08000000UL
+#define BOOT_FLASH_END                  0x08100000UL
+#define BOOT_FLASH_SECTOR_SIZE          (128UL * 1024UL)
+#define BOOT_FLASH_WORD_SIZE             32UL
+
+#define BOOTLOADER_BASE                 0x08000000UL
+#define BOOTLOADER_SIZE                 BOOT_FLASH_SECTOR_SIZE
+
+#define BOOT_PRIMARY_BASE               0x08020000UL
+#define BOOT_SECONDARY_BASE             0x08080000UL
+#define BOOT_SLOT_SIZE                  (3UL * BOOT_FLASH_SECTOR_SIZE)
+#define BOOT_SCRATCH_BASE               0x080E0000UL
+#define BOOT_SCRATCH_SIZE               BOOT_FLASH_SECTOR_SIZE
+
+#define BOOT_IMAGE_HEADER_SIZE          0x200UL
+#define BOOT_IMAGE_TRAILER_SIZE         0x1000UL
+#define BOOT_PRIMARY_PAYLOAD_BASE       (BOOT_PRIMARY_BASE + BOOT_IMAGE_HEADER_SIZE)
+#define BOOT_SECONDARY_PAYLOAD_BASE     (BOOT_SECONDARY_BASE + BOOT_IMAGE_HEADER_SIZE)
+#define BOOT_PAYLOAD_SIZE               (BOOT_SLOT_SIZE - BOOT_IMAGE_HEADER_SIZE - BOOT_IMAGE_TRAILER_SIZE)
+#define BOOT_PRIMARY_TRAILER_BASE       (BOOT_PRIMARY_BASE + BOOT_SLOT_SIZE - BOOT_IMAGE_TRAILER_SIZE)
+#define BOOT_SECONDARY_TRAILER_BASE     (BOOT_SECONDARY_BASE + BOOT_SLOT_SIZE - BOOT_IMAGE_TRAILER_SIZE)
+
+#define BOOT_PRIMARY_SECTOR             1U
+#define BOOT_SECONDARY_SECTOR           4U
+#define BOOT_SCRATCH_SECTOR             7U
+
+#define BOOT_APP_VECTOR_ADDRESS         BOOT_PRIMARY_PAYLOAD_BASE
+#define BOOT_BOARD_ID                   0x48374231UL /* H7B1 */
+#define BOOT_VERSION                    0x00010005UL
+
+_Static_assert(BOOT_PRIMARY_BASE + BOOT_SLOT_SIZE == BOOT_SECONDARY_BASE, "primary layout");
+_Static_assert(BOOT_SECONDARY_BASE + BOOT_SLOT_SIZE == BOOT_SCRATCH_BASE, "secondary layout");
+_Static_assert(BOOT_SCRATCH_BASE + BOOT_SCRATCH_SIZE == BOOT_FLASH_END, "scratch layout");
+_Static_assert((BOOT_IMAGE_HEADER_SIZE % BOOT_FLASH_WORD_SIZE) == 0U, "header alignment");
+_Static_assert((BOOT_IMAGE_TRAILER_SIZE % BOOT_FLASH_WORD_SIZE) == 0U, "trailer alignment");
+
+#endif
